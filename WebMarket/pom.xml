@@ -15,8 +15,15 @@
 	<description>Generic backend application for delivery services.</description>
 	<properties>
 		<java.version>11</java.version>
+		
+		<sonar.projectKey>Tqs-project_Backend</sonar.projectKey>
+		<sonar.organization>tqs-project-1</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 	<dependencies>
+		<!-- Testing dependencies -->
+
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-amqp</artifactId>
