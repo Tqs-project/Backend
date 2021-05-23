@@ -22,8 +22,17 @@
 	</properties>
 	<dependencies>
 		<!-- Testing dependencies -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.200</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- End testing dependencies -->
 
+		<!-- Other dependencies -->
 
+		<!-- End other dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-amqp</artifactId>
