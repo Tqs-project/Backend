@@ -41,5 +41,6 @@ jobs:
       - name: Deploy to google cloud
         uses: satak/webrequest-action@master
         with:
-          url: https://cloudbuild.googleapis.com/v1/projects/${{ secrets.PROJECT_NAME }}/triggers/${{ secrets.TRIGGER_NAME }}:webhook?key=${{ secrets.GOOGLE_API_KEY }}&secret=${{ secrets.GOOGLE_SECRET }}
+          #url: https://cloudbuild.googleapis.com/v1/projects/${{ secrets.PROJECT_NAME }}/triggers/${{ secrets.TRIGGER_NAME }}:webhook?key=${{ secrets.GOOGLE_API_KEY }}&secret=${{ secrets.GOOGLE_SECRET }}
+          url: ${{ secrets.GOOGLE_WEBHOOK_URL }}
           method: POST
