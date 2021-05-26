@@ -1,3 +1,4 @@
 steps:
-- name: 'gcr.io/$PROJECT_ID/docker-compose:1.28.2'
-  args: ['up']
+- name: gcr.io/$PROJECT_ID/cloud-builders/docker
+  args: ['build', '-f', './WebaMarket/Dockerfile', '-t', 'gcr.io/$PROJECT_ID/webmarket-app', '.']
+images: ['gcr.io/$PROJECT_ID/webmarket-app']
