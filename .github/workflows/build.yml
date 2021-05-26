@@ -39,8 +39,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify --file WebMarket/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
       - name: Deploy to google cloud
-        uses: satak/webrequest-action@master
+        uses: CamiloGarciaLaRotta/watermelon-http-client@v1
         with:
           #url: https://cloudbuild.googleapis.com/v1/projects/${{ secrets.PROJECT_NAME }}/triggers/${{ secrets.TRIGGER_NAME }}:webhook?key=${{ secrets.GOOGLE_API_KEY }}&secret=${{ secrets.GOOGLE_SECRET }}
           url: ${{ secrets.GOOGLE_WEBHOOK_URL }}
-          method: POST
+          method: post
+          data: '{}'
