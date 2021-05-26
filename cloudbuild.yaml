@@ -1,4 +1,4 @@
 steps:
-- name: gcr.io/$PROJECT_ID/cloud-builders/docker
+- name: 'gcr.io/$PROJECT_ID/cloud-builders/docker:19.03.8'
   args: ['build', '-f', './WebaMarket/Dockerfile', '-t', 'gcr.io/$PROJECT_ID/webmarket-app', '.']
 images: ['gcr.io/$PROJECT_ID/webmarket-app']
