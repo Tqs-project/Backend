@@ -38,8 +38,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify --file WebMarket/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-      - name: Deploy to Google Cloud
-        run: mvn clean package --file WebMarket/pom.xml -DskipTests=true appengine:deploy
+      - name: Deploy to App Engine (Google Cloud)
+        uses: google-github-actions/deploy-appengine@v0.2.0
+        with:
+          deliverables: app.yaml
+          project_id: ${{ secrets.GCP_PROJECT }}
+          credentials: ${{ secrets.GCP_SA_KEY }}
+          promote: false
+          version: v1      
       # - name: Deploy to google cloud
       #   uses: CamiloGarciaLaRotta/watermelon-http-client@v1
       #   with:

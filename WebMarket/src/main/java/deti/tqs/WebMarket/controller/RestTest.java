@@ -10,6 +10,6 @@ public class RestTest {
     
     @GetMapping("/test")
     public String test() {
-        return "olá";
+        return "olá dps de github action";
     }
 }
