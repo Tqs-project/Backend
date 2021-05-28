@@ -5,11 +5,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/")
-public class RestTest {
-    
-    @GetMapping("/test")
-    public String test() {
-        return "olá dps de github action";
+@RequestMapping("/")
+public class FrontController {
+
+    @GetMapping
+    public String index() {
+        return "Hello!! This is an API... so... sorry but in this site you won't see pretty CSS :(";
     }
 }
