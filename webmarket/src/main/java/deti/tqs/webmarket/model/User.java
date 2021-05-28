@@ -1,4 +1,4 @@
-package deti.tqs.WebMarket.model;
+package deti.tqs.webmarket.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

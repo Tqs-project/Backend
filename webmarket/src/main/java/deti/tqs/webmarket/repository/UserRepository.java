@@ -1,8 +1,7 @@
-package deti.tqs.WebMarket.repository;
+package deti.tqs.webmarket.repository;
 
+import deti.tqs.webmarket.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import deti.tqs.WebMarket.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     
