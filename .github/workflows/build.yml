@@ -5,7 +5,7 @@ on:
       - main
       - release
       - dev
-      - '**-dev-**'
+      - '**-feature-**'
       - '**-bug-**'
   pull_request:
     types: [opened, synchronize, reopened]
@@ -46,7 +46,7 @@ jobs:
           credentials: ${{ secrets.GCP_SA_KEY }}
           promote: true
           version: v1      
-      # - name: Deploy to google cloud
+      # - name: Deploy to google cloud with cloud build
       #   uses: CamiloGarciaLaRotta/watermelon-http-client@v1
       #   with:
       #     #url: https://cloudbuild.googleapis.com/v1/projects/${{ secrets.PROJECT_NAME }}/triggers/${{ secrets.TRIGGER_NAME }}:webhook?key=${{ secrets.GOOGLE_API_KEY }}&secret=${{ secrets.GOOGLE_SECRET }}
