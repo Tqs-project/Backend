@@ -1,4 +1,4 @@
-name: Build with sonarCloud
+name: Build with Sonarcloud and Deploy with Google Cloud
 on:
   push:
     branches:
@@ -37,11 +37,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify --file WebMarket/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+        run: mvn -B verify --file webmarket/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
       - name: Deploy to App Engine (Google Cloud)
         uses: google-github-actions/deploy-appengine@v0.2.0
         with:
-          deliverables: WebMarket/app.yaml
+          deliverables: webmarket/app.yaml
           project_id: ${{ secrets.GCP_PROJECT }}
           credentials: ${{ secrets.GCP_SA_KEY }}
           promote: true
