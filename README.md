@@ -1,5 +1,5 @@
 # WebMarket
-A platform for companies to have riders as a service.
+Generic platform that employs a fleet of riders and offers their service for any company that needs deliveries.
 
 ## Help for developers
 1. Pivotal Tracker project
