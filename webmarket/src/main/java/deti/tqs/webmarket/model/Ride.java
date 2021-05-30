@@ -1,11 +1,18 @@
 package deti.tqs.webmarket.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 @Data
 @Entity
 @Table(name = "rides")
@@ -15,7 +22,6 @@ public class Ride {
     @Column(name = "order_id")
     private Long id;
 
-    @JsonBackReference
     @OneToOne
     @MapsId
     @JoinColumn(name = "order_id")
@@ -31,7 +37,6 @@ public class Ride {
 
     private Timestamp timestampEnd;
 
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "assigned_rider")
     private Rider rider;

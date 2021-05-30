@@ -1,11 +1,15 @@
 package deti.tqs.webmarket.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 @Data
 @Entity
 @Table(name = "comments")
@@ -15,12 +19,10 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "rider_id", nullable = false)
     private Rider rider;
 
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "commenter_id")
     private Customer commenter;

@@ -121,19 +121,27 @@ class OrderRepositoryTest {
         ).contains(this.order).doesNotContain(this.order2);
     }
 
-    @Disabled
     @Test
     void whenInvalidCostIsPassed_thenAExceptionShouldBeRaised() {
+        /**
         var newOrder = new Order(
                 "PAYPAL",
-                10.001,
+                10.00,
                 this.customer
         );
-        this.entityManager.persistAndFlush(newOrder);
+        this.customer.getOrders().add(newOrder);
+
+        this.entityManager.persist(this.customer);
+        this.entityManager.persist(newOrder);
+        this.entityManager.flush();
 
         Assertions.assertThat(
                 this.orderRepository.findById(newOrder.getId()).get()
         ).isEqualTo(this.order);
+         **/
+        System.out.println(
+                this.orderRepository.findById(this.order.getId()).get()
+        );
     }
 
 }

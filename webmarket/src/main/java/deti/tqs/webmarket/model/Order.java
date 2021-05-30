@@ -1,12 +1,15 @@
 package deti.tqs.webmarket.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 @Data
 @Entity
 @Table(name = "orders")
@@ -27,12 +30,11 @@ public class Order {
     @Column(columnDefinition = "Decimal(10, 2)")
     private Double cost;
 
-    @JsonBackReference
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    @JsonManagedReference
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private Ride ride;

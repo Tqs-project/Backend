@@ -1,13 +1,16 @@
 package deti.tqs.webmarket.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 @Data
 @Entity
 @Table(name = "customer")
@@ -17,7 +20,6 @@ public class Customer {
     @Column(name = "user_id")
     private Long id;
 
-    @JsonBackReference
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id")
@@ -32,24 +34,24 @@ public class Customer {
     private String typeOfService;
 
     @Column(length = 33)
-    private String IBAN;
+    private String iban;
 
-    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(mappedBy = "commenter")
     private List<Comment> comments;
 
-    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(mappedBy = "customer")
     private List<Order> orders;
 
     public Customer() {}
 
-    public Customer(User user, String address, String description, String typeOfService, String IBAN) {
+    public Customer(User user, String address, String description, String typeOfService, String iban) {
         this.user = user;
         this.address = address;
         this.description = description;
         this.typeOfService = typeOfService;
-        this.IBAN = IBAN;
+        this.iban = iban;
 
         this.comments = new ArrayList<>();
         this.orders = new ArrayList<>();

@@ -1,12 +1,16 @@
 package deti.tqs.webmarket.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 @Data
 @Entity
 @Table(name = "riders")
@@ -23,7 +27,7 @@ public class Rider {
 
     private String vehiclePlate;
 
-    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(mappedBy = "rider")
     private List<Comment> comments;
 
@@ -34,7 +38,7 @@ public class Rider {
 
     private Boolean busy;
 
-    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(mappedBy = "rider")
     private List<Ride> rides;
 
