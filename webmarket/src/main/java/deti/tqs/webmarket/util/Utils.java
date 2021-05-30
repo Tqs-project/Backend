@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 
 @Log4j2
 public class Utils {
+    private Utils() {}
+
     public static Timestamp parseTimestamp(String timestamp) {
         var formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {

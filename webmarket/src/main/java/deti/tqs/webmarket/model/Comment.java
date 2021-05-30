@@ -27,17 +27,17 @@ public class Comment {
 
     private Integer stars;
 
-    private String comment;
+    private String opinion;
 
     private Timestamp timestamp;
 
     public Comment() {}
 
-    public Comment(Rider rider, Customer customer, Integer stars, String comment) {
+    public Comment(Rider rider, Customer customer, Integer stars, String opinion) {
         this.rider = rider;
         this.commenter = customer;
         this.stars = stars;
-        this.comment = comment;
+        this.opinion = opinion;
         this.timestamp = new Timestamp(System.currentTimeMillis());
     }
 
