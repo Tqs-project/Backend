@@ -4,14 +4,12 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Objects;
 
 @Data
 @Entity
 @Table(name = "rides")
 public class Ride {
 
-    /**
     @Id
     @Column(name = "order_id")
     private Long id;
@@ -19,10 +17,7 @@ public class Ride {
     @OneToOne
     @MapsId
     @JoinColumn(name = "order_id")
-    private Order order;**/
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Order order;
 
     private String origin;
 
@@ -30,17 +25,20 @@ public class Ride {
 
     //private Double tripDistance;
 
-    private String assignedRider;
+    private Timestamp timestampInit;
 
-    //private Timestamp timestampInit;
+    private Timestamp timestampEnd;
 
-    //private Timestamp timestampEnd;
+    @ManyToOne
+    @JoinColumn(name = "assigned_rider")
+    private Rider rider;
 
     public Ride() {}
 
-    public Ride(String origin, String destination, String assignedRider) {
+    public Ride(String origin, String destination) {
         this.origin = origin;
         this.destination = destination;
-        this.assignedRider = assignedRider;
+
+        this.timestampInit = new Timestamp(System.currentTimeMillis());
     }
 }

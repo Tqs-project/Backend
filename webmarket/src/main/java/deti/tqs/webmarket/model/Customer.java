@@ -34,6 +34,9 @@ public class Customer {
     @OneToMany(mappedBy = "commenter")
     private List<Comment> comments;
 
+    @OneToMany(mappedBy = "customer")
+    private List<Order> orders;
+
     public Customer() {}
 
     public Customer(User user, String address, String description, String typeOfService, String IBAN) {
@@ -42,6 +45,8 @@ public class Customer {
         this.description = description;
         this.typeOfService = typeOfService;
         this.IBAN = IBAN;
+
         this.comments = new ArrayList<>();
+        this.orders = new ArrayList<>();
     }
 }

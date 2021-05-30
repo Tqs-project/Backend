@@ -4,7 +4,7 @@ import deti.tqs.webmarket.model.Comment;
 import deti.tqs.webmarket.model.Customer;
 import deti.tqs.webmarket.model.Rider;
 import deti.tqs.webmarket.model.User;
-import lombok.extern.log4j.Log4j2;
+import deti.tqs.webmarket.util.Utils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,11 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
-@Log4j2
 @DataJpaTest
 class CommentRepositoryTest {
 
@@ -65,10 +60,10 @@ class CommentRepositoryTest {
 
         // change comment timestamp
         this.comment1.setTimestamp(
-                parseTimestamp("2021-05-27 00:00:00")
+                Utils.parseTimestamp("2021-05-27 00:00:00")
         );
         this.comment2.setTimestamp(
-                parseTimestamp("2021-05-29 00:00:00")
+                Utils.parseTimestamp("2021-05-29 00:00:00")
         );
 
         this.entityManager.persist(user1);
@@ -155,7 +150,7 @@ class CommentRepositoryTest {
     void timestampAfterTest_returnAllCommentsAfterACertainTimestamp() {
         Assertions.assertThat(
                 this.commentRepository.findCommentsByTimestampAfter(
-                        parseTimestamp("2021-05-28 00:00:00")
+                        Utils.parseTimestamp("2021-05-28 00:00:00")
                 )
         ).contains(this.comment2).doesNotContain(this.comment1);
     }
@@ -164,18 +159,8 @@ class CommentRepositoryTest {
     void timestampBeforeTest_returnAllCommentsBeforeACertainTimestamp() {
         Assertions.assertThat(
                 this.commentRepository.findCommentsByTimestampBefore(
-                        parseTimestamp("2021-05-28 00:00:00")
+                        Utils.parseTimestamp("2021-05-28 00:00:00")
                 )
         ).contains(this.comment1).doesNotContain(this.comment2);
-    }
-
-    private Timestamp parseTimestamp(String timestamp) {
-        var formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            return new Timestamp(formatter.parse(timestamp).getTime());
-        } catch (ParseException e) {
-            log.error(String.format("Error parsing timestamp %s", timestamp));
-            return new Timestamp(System.currentTimeMillis());
-        }
     }
 }
