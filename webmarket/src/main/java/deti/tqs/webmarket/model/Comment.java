@@ -1,5 +1,6 @@
 package deti.tqs.webmarket.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -14,10 +15,12 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "rider_id", nullable = false)
     private Rider rider;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "commenter_id")
     private Customer commenter;

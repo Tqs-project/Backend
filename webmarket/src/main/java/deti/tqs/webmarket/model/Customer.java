@@ -1,5 +1,7 @@
 package deti.tqs.webmarket.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -15,6 +17,7 @@ public class Customer {
     @Column(name = "user_id")
     private Long id;
 
+    @JsonBackReference
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id")
@@ -31,9 +34,11 @@ public class Customer {
     @Column(length = 33)
     private String IBAN;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "commenter")
     private List<Comment> comments;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "customer")
     private List<Order> orders;
 

@@ -1,5 +1,7 @@
 package deti.tqs.webmarket.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -22,19 +24,22 @@ public class Order {
     @Column(columnDefinition = "VARCHAR(20) CHECK (status IN ('WAITING', 'DELIVERING', 'DELIVERED'))")
     private String status;
 
-    private Float cost;
+    @Column(columnDefinition = "Decimal(10, 2)")
+    private Double cost;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
+    @JsonManagedReference
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private Ride ride;
 
     public Order() {}
 
-    public Order(String paymentType, Float cost, Customer customer) {
+    public Order(String paymentType, Double cost, Customer customer) {
         this.paymentType = paymentType;
         this.cost = cost;
         this.customer = customer;

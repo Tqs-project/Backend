@@ -1,5 +1,6 @@
 package deti.tqs.webmarket.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public class Rider {
 
     private String vehiclePlate;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "rider")
     private List<Comment> comments;
 
@@ -32,6 +34,7 @@ public class Rider {
 
     private Boolean busy;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "rider")
     private List<Ride> rides;
 

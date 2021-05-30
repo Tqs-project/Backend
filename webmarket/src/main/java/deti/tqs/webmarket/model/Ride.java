@@ -1,5 +1,6 @@
 package deti.tqs.webmarket.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ public class Ride {
     @Column(name = "order_id")
     private Long id;
 
+    @JsonBackReference
     @OneToOne
     @MapsId
     @JoinColumn(name = "order_id")
@@ -29,6 +31,7 @@ public class Ride {
 
     private Timestamp timestampEnd;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "assigned_rider")
     private Rider rider;
