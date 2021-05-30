@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -31,6 +32,15 @@ public class User {
     @Size(min = 9, max = 9)
     @Column(length = 9)
     private String phoneNumber;
+
+    // riders and customers
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private Rider rider;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private Customer customer;
 
     /** we have to put this boiler plate code because of tests made with DataJpaTest
      *  lombok code is only available after the start of the application
