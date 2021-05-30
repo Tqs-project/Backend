@@ -1,8 +1,11 @@
 package deti.tqs.webmarket.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
+@Data
 @Entity
 @Table(name = "orders")
 public class Order {
