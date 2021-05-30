@@ -6,6 +6,7 @@ import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.util.Utils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -120,6 +121,7 @@ class OrderRepositoryTest {
         ).contains(this.order).doesNotContain(this.order2);
     }
 
+    @Disabled
     @Test
     void whenInvalidCostIsPassed_thenAExceptionShouldBeRaised() {
         var newOrder = new Order(
