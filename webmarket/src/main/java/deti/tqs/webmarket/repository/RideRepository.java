@@ -1,0 +1,9 @@
+package deti.tqs.webmarket.repository;
+
+import deti.tqs.webmarket.model.Ride;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface RideRepository extends JpaRepository<Ride, Long> {
+}

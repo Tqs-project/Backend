@@ -26,8 +26,6 @@ class CommentRepositoryTest {
     @Autowired
     private CommentRepository commentRepository;
 
-    private User user1;
-    private User user2;
     private Rider rider;
     private Customer customer;
     private Comment comment1;
@@ -37,7 +35,7 @@ class CommentRepositoryTest {
     void setUp() {
         this.entityManager.clear();
 
-        this.user1 = new User(
+        var user1 = new User(
                 "Urlando",
                 "urlando@gmail.com",
                 "CUSTOMER",
@@ -45,7 +43,7 @@ class CommentRepositoryTest {
                 "93555555"
         );
 
-        this.user2 = new User(
+        var user2 = new User(
                 "Jorge",
                 "jorge@gmail.com",
                 "RIDER",
@@ -53,9 +51,9 @@ class CommentRepositoryTest {
                 "93555557"
         );
 
-        this.rider = new Rider(this.user2, "00-AA-11");
+        this.rider = new Rider(user2, "00-AA-11");
         this.customer = new Customer(
-                this.user1,
+                user1,
                 "Back street",
                 "Very good restaurant, you can trust",
                 "Restaurant",
@@ -73,8 +71,8 @@ class CommentRepositoryTest {
                 parseTimestamp("2021-05-29 00:00:00")
         );
 
-        this.entityManager.persist(this.user1);
-        this.entityManager.persist(this.user2);
+        this.entityManager.persist(user1);
+        this.entityManager.persist(user2);
 
         this.customer.getComments().add(this.comment1);
         this.customer.getComments().add(this.comment2);
