@@ -22,7 +22,7 @@ public class Customer {
 
     private String description;
 
-    private String image;
+    private String imageUrl;
 
     private String typeOfService;
 
@@ -75,12 +75,12 @@ public class Customer {
         this.description = description;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getTypeOfService() {
@@ -112,12 +112,12 @@ public class Customer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Customer customer = (Customer) o;
-        return Objects.equals(id, customer.id) && Objects.equals(user, customer.user) && Objects.equals(address, customer.address) && Objects.equals(description, customer.description) && Objects.equals(image, customer.image) && Objects.equals(typeOfService, customer.typeOfService) && Objects.equals(IBAN, customer.IBAN) && Objects.equals(comments, customer.comments);
+        return Objects.equals(id, customer.id) && Objects.equals(user, customer.user) && Objects.equals(address, customer.address) && Objects.equals(description, customer.description) && Objects.equals(imageUrl, customer.imageUrl) && Objects.equals(typeOfService, customer.typeOfService) && Objects.equals(IBAN, customer.IBAN) && Objects.equals(comments, customer.comments);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, address, description, image, typeOfService, IBAN, comments);
+        return Objects.hash(id, user, address, description, imageUrl, typeOfService, IBAN, comments);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class Customer {
                 ", user=" + user +
                 ", address='" + address + '\'' +
                 ", description='" + description + '\'' +
-                ", image='" + image + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
                 ", typeOfService='" + typeOfService + '\'' +
                 ", IBAN='" + IBAN + '\'' +
                 ", comments=" + comments +
