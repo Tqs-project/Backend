@@ -1,16 +1,11 @@
 package deti.tqs.webmarket.model;
 
-import com.fasterxml.jackson.annotation.*;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
 @Data
 @Entity
 @Table(name = "customer")
@@ -36,11 +31,9 @@ public class Customer {
     @Column(length = 33)
     private String iban;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "commenter")
     private List<Comment> comments;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "customer")
     private List<Order> orders;
 
@@ -55,5 +48,24 @@ public class Customer {
 
         this.comments = new ArrayList<>();
         this.orders = new ArrayList<>();
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", user=" + user +
+                ", address='" + address + '\'' +
+                ", description='" + description + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", typeOfService='" + typeOfService + '\'' +
+                ", iban='" + iban + '\'' +
+                ", comments=" + comments.stream().map(
+                (comment) -> comment.getId().toString()
+        ).reduce("[", (partialString, id) -> partialString + ", " + id) + "]" +
+                ", orders=" + orders.stream().map(
+                (comment) -> comment.getId().toString()
+        ).reduce("[", (partialString, id) -> partialString + ", " + id) + "]" +
+                '}';
     }
 }

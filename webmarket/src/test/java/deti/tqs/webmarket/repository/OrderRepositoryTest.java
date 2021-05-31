@@ -123,7 +123,6 @@ class OrderRepositoryTest {
 
     @Test
     void whenInvalidCostIsPassed_thenAExceptionShouldBeRaised() {
-        /**
         var newOrder = new Order(
                 "PAYPAL",
                 10.00,
@@ -138,10 +137,6 @@ class OrderRepositoryTest {
         Assertions.assertThat(
                 this.orderRepository.findById(newOrder.getId()).get()
         ).isEqualTo(this.order);
-         **/
-        System.out.println(
-                this.orderRepository.findById(this.order.getId()).get()
-        );
     }
 
 }

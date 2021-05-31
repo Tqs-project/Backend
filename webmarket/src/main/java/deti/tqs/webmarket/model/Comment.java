@@ -1,15 +1,10 @@
 package deti.tqs.webmarket.model;
 
-import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
 @Data
 @Entity
 @Table(name = "comments")

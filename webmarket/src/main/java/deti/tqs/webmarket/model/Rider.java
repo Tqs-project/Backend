@@ -1,16 +1,11 @@
 package deti.tqs.webmarket.model;
 
-import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
 @Data
 @Entity
 @Table(name = "riders")
@@ -27,7 +22,6 @@ public class Rider {
 
     private String vehiclePlate;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "rider")
     private List<Comment> comments;
 
@@ -38,7 +32,6 @@ public class Rider {
 
     private Boolean busy;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "rider")
     private List<Ride> rides;
 
@@ -50,5 +43,23 @@ public class Rider {
         this.comments = new ArrayList<>();
         this.rides = new ArrayList<>();
         this.busy = false;
+    }
+
+    @Override
+    public String toString() {
+        return "Rider{" +
+                "id=" + id +
+                ", user=" + user +
+                ", vehiclePlate='" + vehiclePlate + '\'' +
+                ", comments=" + comments.stream().map(
+                (comment) -> comment.getId().toString()
+        ).reduce("[", (partialString, id) -> partialString + ", " + id) + "]" +
+                ", lat='" + lat + '\'' +
+                ", lng='" + lng + '\'' +
+                ", busy=" + busy +
+                ", rides=" + rides.stream().map(
+                (ride) -> ride.getId().toString()
+        ).reduce("[", (partialString, id) -> partialString + ", " + id) + "]" +
+                '}';
     }
 }
