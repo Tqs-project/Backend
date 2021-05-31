@@ -4,7 +4,6 @@ import deti.tqs.webmarket.model.Comment;
 import deti.tqs.webmarket.model.Customer;
 import deti.tqs.webmarket.model.Rider;
 import deti.tqs.webmarket.model.User;
-import org.assertj.core.api.Assert;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,8 +20,6 @@ class RiderRepositoryTest {
     @Autowired
     private RiderRepository riderRepository;
 
-    private User user1;
-    private User user2;
     private Rider rider;
     private Customer customer;
     private Comment comment;
@@ -31,7 +28,7 @@ class RiderRepositoryTest {
     void setUp() {
         this.entityManager.clear();
 
-        this.user1 = new User(
+        var user1 = new User(
                 "Urlando",
                 "urlando@gmail.com",
                 "CUSTOMER",
@@ -39,7 +36,7 @@ class RiderRepositoryTest {
                 "93555555"
         );
 
-        this.user2 = new User(
+        var user2 = new User(
                 "Jorge",
                 "jorge@gmail.com",
                 "RIDER",
@@ -47,9 +44,9 @@ class RiderRepositoryTest {
                 "93555557"
         );
 
-        this.rider = new Rider(this.user2, "00-AA-11");
+        this.rider = new Rider(user2, "00-AA-11");
         this.customer = new Customer(
-                this.user1,
+                user1,
                 "Back street",
                 "Very good restaurant, you can trust",
                 "Restaurant",
@@ -58,8 +55,8 @@ class RiderRepositoryTest {
 
         this.comment = new Comment(this.rider, this.customer, 5, "perfect service");
 
-        this.entityManager.persist(this.user1);
-        this.entityManager.persist(this.user2);
+        this.entityManager.persist(user1);
+        this.entityManager.persist(user2);
 
         this.customer.getComments().add(this.comment);
         this.entityManager.persist(this.customer);
