@@ -62,10 +62,10 @@ public class Customer {
                 ", iban='" + iban + '\'' +
                 ", comments=" + comments.stream().map(
                 (comment) -> comment.getId().toString()
-        ).reduce("[", (partialString, id) -> partialString + ", " + id) + "]" +
+        ).reduce("[", (partialString, identifier) -> partialString + ", " + identifier) + "]" +
                 ", orders=" + orders.stream().map(
                 (comment) -> comment.getId().toString()
-        ).reduce("[", (partialString, id) -> partialString + ", " + id) + "]" +
+        ).reduce("[", (partialString, identifier) -> partialString + ", " + identifier) + "]" +
                 '}';
     }
 }

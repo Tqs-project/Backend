@@ -75,13 +75,14 @@ class OrderRepositoryTest {
 
     @Test
     void whenPaymentMethodEqualsCash_thenAExceptionShouldBeRaised() {
+        var order10 = new Order(
+                "CASH",
+                20.15,
+                this.customer
+        );
         Assertions.assertThatThrownBy(
                 () -> this.entityManager.persistAndFlush(
-                        new Order(
-                                "CASH",
-                                20.15,
-                                this.customer
-                        )
+                        order10
                 )
         ).isInstanceOf(PersistenceException.class);
     }
