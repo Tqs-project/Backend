@@ -24,5 +24,10 @@ class UtilsTest {
         Assertions.assertThat(
                 Utils.parseTimestamp(timestamp)
         ).isEqualTo(testTimestamp);
+
+        // check exception with point instead of minus
+        Assertions.assertThat(
+                Utils.parseTimestamp("2021.05-30 17:00:00")
+        ).isNotEqualTo(testTimestamp);
     }
 }
