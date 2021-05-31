@@ -1,4 +1,4 @@
-package deti.tqs.WebMarket;
+package deti.tqs.webmarket;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

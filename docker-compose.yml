@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+    mysql:
+        image: mysql:latest
+        container_name: mysql-db
+        restart: always
+        environment: 
+            MYSQL_DATABASE: 'webmarket'
+            MYSQL_ROOT_PASSWORD: 'secret-pass'
+        expose: 
+            - 3306
+        volumes: 
+            - my-db:/var/lib/mysql
+
+    web:
+        build: ./WebMarket
+        container_name: webmarket-app
+        restart: always
+        ports: 
+            - 8080:8080
+        depends_on: 
+            - mysql
+
+volumes: 
+    my-db:
