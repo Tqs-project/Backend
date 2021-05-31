@@ -6,7 +6,6 @@ import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.util.Utils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -122,21 +121,10 @@ class OrderRepositoryTest {
     }
 
     @Test
-    void whenInvalidCostIsPassed_thenAExceptionShouldBeRaised() {
-        var newOrder = new Order(
-                "PAYPAL",
-                10.00,
-                this.customer
-        );
-        this.customer.getOrders().add(newOrder);
-
-        this.entityManager.persist(this.customer);
-        this.entityManager.persist(newOrder);
-        this.entityManager.flush();
-
+    void whenQueryingAllTheOrdersMadeByACostumer_thenAllOrdersShouldBeReturned() {
         Assertions.assertThat(
-                this.orderRepository.findById(newOrder.getId()).get()
-        ).isEqualTo(this.order);
+                this.orderRepository.findOrdersByCustomer(this.customer)
+        ).contains(this.order, this.order2);
     }
 
 }

@@ -4,6 +4,7 @@ import deti.tqs.webmarket.model.Comment;
 import deti.tqs.webmarket.model.Customer;
 import deti.tqs.webmarket.model.Rider;
 import deti.tqs.webmarket.model.User;
+import org.assertj.core.api.Assert;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -91,6 +92,33 @@ class RiderRepositoryTest {
         Assertions.assertThat(
                 this.riderRepository.getById(this.rider.getId()).getComments()
         ).contains(this.comment, newComment);
+    }
+
+    @Test
+    void findRidersNotBusyTest() {
+        var user3 = new User(
+                "António",
+                "antonio@gmail.com",
+                "RIDER",
+                "password",
+                "93555552"
+        );
+
+        var rider2 = new Rider(
+                user3, "11-BB-11"
+        );
+
+        // rider 2 is making a delivery
+        rider2.setBusy(true);
+
+        this.entityManager.persist(user3);
+        this.entityManager.persist(rider2);
+        this.entityManager.flush();
+
+        // verify free riders
+        Assertions.assertThat(
+                this.riderRepository.findRidersByBusyEquals(false)
+        ).contains(this.rider).doesNotContain(rider2);
     }
 
 }

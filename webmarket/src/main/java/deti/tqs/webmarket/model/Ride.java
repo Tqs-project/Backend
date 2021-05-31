@@ -19,8 +19,6 @@ public class Ride {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    private String origin;
-
     private String destination;
 
     //private Double tripDistance;
@@ -35,8 +33,8 @@ public class Ride {
 
     public Ride() {}
 
-    public Ride(String origin, String destination) {
-        this.origin = origin;
+    public Ride(Order order, String destination) {
+        this.order = order;
         this.destination = destination;
 
         this.timestampInit = new Timestamp(System.currentTimeMillis());
