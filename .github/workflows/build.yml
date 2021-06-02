@@ -44,7 +44,7 @@ jobs:
           deliverables: webmarket/app.yaml
           project_id: ${{ secrets.GCP_PROJECT }}
           credentials: ${{ secrets.GCP_SA_KEY }}
-          promote: true
+          promote: false
           version: v1      
       # - name: Deploy to google cloud with cloud build
       #   uses: CamiloGarciaLaRotta/watermelon-http-client@v1
