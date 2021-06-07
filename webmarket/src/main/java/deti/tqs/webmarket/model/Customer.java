@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "customer")
+@Table(name = "customers")
 public class Customer {
 
     @Id
@@ -36,6 +36,9 @@ public class Customer {
 
     @OneToMany(mappedBy = "customer")
     private List<Order> orders;
+
+    // authentication purposes
+    private String authToken;
 
     public Customer() {}
 

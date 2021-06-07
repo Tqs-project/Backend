@@ -7,7 +7,6 @@ import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.repository.CustomerRepository;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.util.Utils;
-import javassist.tools.web.BadHttpRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,6 +69,7 @@ public class CustomerServiceImp implements CustomerService{
     @Override
     public TokenDto login(CustomerDto customerDto) {
         User user;
+        boolean email = false;
         if (customerDto.getUsername() != null) {
             user = this.userRepository.findByUsername(customerDto.getUsername()).orElseThrow(
                     () -> new EntityNotFoundException("No user with username " + customerDto.getUsername() + ".")
@@ -83,7 +83,13 @@ public class CustomerServiceImp implements CustomerService{
         }
 
         if (customerDto.getPassword().equals(user.getPassword())) {
-            return new TokenDto("this-is-the-token", "");
+            var token = "this-is-the-token";
+
+            var customer = user.getCustomer();
+            customer.setAuthToken(token);
+            this.customerRepository.save(customer);
+
+            return new TokenDto(token, "");
         }
         return new TokenDto("", "Bad authentication parameters");
     }

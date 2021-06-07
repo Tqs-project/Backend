@@ -1,11 +1,15 @@
 package deti.tqs.webmarket.util;
 
+import deti.tqs.webmarket.model.Comment;
+import deti.tqs.webmarket.model.Customer;
+import deti.tqs.webmarket.model.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 class UtilsTest {
 
@@ -29,5 +33,44 @@ class UtilsTest {
         Assertions.assertThat(
                 Utils.parseTimestamp("2021.05-30 17:00:00")
         ).isNotEqualTo(testTimestamp);
+    }
+
+    @Test
+    void parseCustomerDto() {
+        var user = new User(
+                "Jorge",
+                "jorge@gmail.com",
+                "RIDER",
+                "password",
+                "93555557"
+        );
+
+        var customer = new Customer(
+                user,
+                "Back street",
+                "Very good restaurant, you can trust",
+                "Restaurant",
+                "PT50000201231234567890154"
+        );
+
+        var comment = new Comment();
+        comment.setId(10L);
+        var comment2 = new Comment();
+        comment2.setId(11L);
+
+        customer.setComments(Arrays.asList(comment, comment2));
+
+        var parsing = Utils.parseCustomerDto(customer);
+        Assertions.assertThat(
+                parsing
+        ).extracting("typeOfService").isEqualTo("Restaurant");
+
+        Assertions.assertThat(
+                parsing
+        ).extracting("username").isEqualTo(user.getUsername());
+
+        Assertions.assertThat(
+                parsing
+        ).extracting("comments").isEqualTo(Arrays.asList(10L, 11L));
     }
 }
