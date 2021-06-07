@@ -28,6 +28,7 @@ public class RiderService {
     }
 
     public Object login(String email, String password){
+        //TODO: make login method
         return null;
     }
 
