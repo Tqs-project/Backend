@@ -8,6 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RiderService {
     
@@ -29,6 +31,10 @@ public class RiderService {
 
     public Rider getRiderByEmail(String email) {
         return repository.findByUser_Email(email);
+    }
+
+    public List<Rider> getAllRiders() {
+        return repository.findAll();
     }
 
 }

@@ -1,10 +1,28 @@
 package deti.tqs.webmarket.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import deti.tqs.webmarket.dto.RiderDto;
+import deti.tqs.webmarket.model.Rider;
+import deti.tqs.webmarket.service.RiderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/riders")
 public class RiderController {
+    @Autowired
+    private RiderService service;
+
+    @PostMapping("")
+    public Rider createRider(@Valid @RequestBody RiderDto riderDto) throws Exception {
+        return service.registerRider(riderDto);
+    }
+
+    @GetMapping("")
+    public List<Rider> getRiders(){
+        return service.getAllRiders();
+    }
+
 }
