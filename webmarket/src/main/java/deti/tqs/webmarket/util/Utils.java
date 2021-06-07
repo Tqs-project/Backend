@@ -28,10 +28,10 @@ public class Utils {
         var comments = new ArrayList<Long>();
         var orders = new ArrayList<Long>();
         customer.getComments().forEach(
-                (comment) -> comments.add(comment.getId())
+                comment -> comments.add(comment.getId())
         );
         customer.getOrders().forEach(
-                (order) -> orders.add(order.getId())
+                order -> orders.add(order.getId())
         );
         return new CustomerDto(
                 customer.getId(),

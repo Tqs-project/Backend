@@ -25,7 +25,6 @@ public class User {
     @Column(columnDefinition = "VARCHAR(20) CHECK (role IN ('ADMIN', 'RIDER', 'CUSTOMER'))")
     private String role;
 
-    // TODO encrypt password
     @Column(nullable = false)
     private String password;
 

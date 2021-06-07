@@ -64,10 +64,10 @@ public class Customer {
                 ", typeOfService='" + typeOfService + '\'' +
                 ", iban='" + iban + '\'' +
                 ", comments=" + comments.stream().map(
-                (comment) -> comment.getId().toString()
+                comment -> comment.getId().toString()
         ).reduce("[", (partialString, identifier) -> partialString + ", " + identifier) + "]" +
                 ", orders=" + orders.stream().map(
-                (comment) -> comment.getId().toString()
+                comment -> comment.getId().toString()
         ).reduce("[", (partialString, identifier) -> partialString + ", " + identifier) + "]" +
                 '}';
     }
