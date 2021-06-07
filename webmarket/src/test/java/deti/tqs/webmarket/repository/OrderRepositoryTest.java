@@ -49,7 +49,8 @@ class OrderRepositoryTest {
         this.order = new Order(
                 "MBWAY",
                 19.99,
-                this.customer
+                this.customer,
+                "Rua da Pereira, 15, Anadia 1111-111"
         );
         this.order.setOrderTimestamp(Utils.parseTimestamp(
                 "2021-05-26 00:00:00"
@@ -58,7 +59,8 @@ class OrderRepositoryTest {
         this.order2 = new Order(
                 "PAYPAL",
                 21.14,
-                this.customer
+                this.customer,
+                "Rua da Macieira, 16, Anadia 1111-112"
         );
         this.order2.setOrderTimestamp(Utils.parseTimestamp(
                 "2021-05-29 00:00:00"
@@ -78,7 +80,8 @@ class OrderRepositoryTest {
         var order10 = new Order(
                 "CASH",
                 20.15,
-                this.customer
+                this.customer,
+                "Rua da Nogueira, 17, Anadia 1111-113"
         );
         Assertions.assertThatThrownBy(
                 () -> this.entityManager.persistAndFlush(
