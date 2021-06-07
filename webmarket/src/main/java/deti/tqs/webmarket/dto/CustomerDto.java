@@ -1,12 +1,8 @@
 package deti.tqs.webmarket.dto;
 
-import deti.tqs.webmarket.model.Comment;
-import deti.tqs.webmarket.model.Order;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -34,9 +30,5 @@ public class CustomerDto {
     private String typeOfService;
 
     private String iban;
-
-    private List<Comment> comments;
-
-    private List<Order> orders;
 
 }

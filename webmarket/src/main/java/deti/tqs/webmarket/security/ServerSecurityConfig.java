@@ -56,11 +56,12 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
+                .antMatchers("/api/customer").permitAll();
                 //.antMatchers("/api/customers/create").permitAll()
                 //.antMatchers("/api/**").hasAnyAuthority("ADMIN", "USER")
                 //.antMatchers("/api2/**").hasAuthority("ADMIN")
                 //.antMatchers("/api3/**").authenticated()
-                .anyRequest().authenticated();
+                //.anyRequest().authenticated();
                 //.and()
                 //.exceptionHandling()
                 //.authenticationEntryPoint(customAuthenticationEntryPoint)
