@@ -37,7 +37,7 @@ public class CustomerController {
         var response = this.customerService.login(customerDto);
 
         if (response.isEmpty())
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
