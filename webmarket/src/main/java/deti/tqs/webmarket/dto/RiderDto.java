@@ -14,32 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class RiderDto {
 
-    private Long id;
-
-    private String username;
-
-    private String email;
-
-    private String role;
-
-    private String password;
-
-    private String phoneNumber;
+    private UserDto user;
 
     private String vehiclePlate;
-
-    private String lat;
-
-    private String lng;
-
-    private Boolean busy;
-
-    private List<Ride> rides;
-
-    private String iban;
-
-    private List<Comment> comments;
-
-    private List<Order> orders;
 
 }
