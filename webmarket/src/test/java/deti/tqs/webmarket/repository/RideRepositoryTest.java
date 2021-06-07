@@ -57,8 +57,7 @@ class RideRepositoryTest {
         var order = new Order(
                 "MBWAY",
                 19.99,
-                customer,
-                "Rua da Macieira, 15, Anadia 1111-111"
+                customer
         );
         order.setOrderTimestamp(Utils.parseTimestamp(
                 "2021-05-26 00:00:00"
@@ -67,8 +66,7 @@ class RideRepositoryTest {
         var order2 = new Order(
                 "PAYPAL",
                 21.14,
-                customer,
-                "Rua da Pereira, 16, Anadia 1111-111"
+                customer
         );
         order2.setOrderTimestamp(Utils.parseTimestamp(
                 "2021-05-29 00:00:00"
