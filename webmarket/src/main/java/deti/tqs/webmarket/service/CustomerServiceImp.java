@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.security.SecureRandom;
 import java.util.Optional;
 import java.util.Random;
 
@@ -29,7 +30,7 @@ public class CustomerServiceImp implements CustomerService{
     @Autowired
     private PasswordEncoder encoder;
 
-    private final Random rand = new Random();
+    private final SecureRandom rand = new SecureRandom();
 
     @Override
     public CustomerDto createCustomer(CustomerDto customerDto) {
