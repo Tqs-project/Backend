@@ -14,10 +14,9 @@ public class RiderService {
     @Autowired
 	private RiderRepository repository;
 
-    public Rider registerRider(RiderDto riderDto){
+    public Rider registerRider(RiderDto riderDto) throws Exception {
         if (repository.existsByUser_Email(riderDto.getEmail())) {
-            System.err.println("Erro");
-            return null;
+            throw new Exception("That email is already in use!");
         } else {
             Rider rider = new ModelMapper().map(riderDto, Rider.class);
             return repository.save(rider);
