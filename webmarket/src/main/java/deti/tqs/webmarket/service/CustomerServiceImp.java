@@ -1,6 +1,7 @@
 package deti.tqs.webmarket.service;
 
 import deti.tqs.webmarket.dto.CustomerDto;
+import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.model.Customer;
 import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.repository.CustomerRepository;
@@ -67,7 +68,7 @@ public class CustomerServiceImp implements CustomerService{
     }
 
     @Override
-    public boolean login(CustomerDto customerDto) {
+    public TokenDto login(CustomerDto customerDto) {
         User user;
         if (customerDto.getUsername() != null) {
             user = this.userRepository.findByUsername(customerDto.getUsername()).orElseThrow(
@@ -81,7 +82,9 @@ public class CustomerServiceImp implements CustomerService{
             throw new RuntimeException("Please provide username or email for authentication");
         }
 
-        if ()
-        return false;
+        if (customerDto.getPassword().equals(user.getPassword())) {
+            return new TokenDto("this-is-the-token", "");
+        }
+        return new TokenDto("", "Bad authentication parameters");
     }
 }
