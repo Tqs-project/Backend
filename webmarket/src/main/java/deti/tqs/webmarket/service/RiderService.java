@@ -24,11 +24,11 @@ public class RiderService {
     }
 
     public Object login(String email, String password){
-
+        return null;
     }
 
     public Rider getRiderByEmail(String email) {
-
+        return repository.findByUser_Email(email);
     }
 
 }

@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface RiderRepository extends JpaRepository<Rider, Long> {
     List<Rider> findRidersByBusyEquals(Boolean busy);
-    List<Rider> findByUser_Email(String email);
+    Rider findByUser_Email(String email);
     Boolean existsByUser_Email(String email);
 }
