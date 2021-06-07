@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Log4j2
 @RestController
-@RequestMapping("/api/customer/")
+@RequestMapping("/api/customer")
 public class CustomerController {
 
     @Autowired
@@ -31,7 +31,7 @@ public class CustomerController {
                 HttpStatus.OK);
     }
 
-    @PostMapping("signin")
+    @PostMapping("/signin")
     public ResponseEntity<TokenDto> login(@RequestBody CustomerDto customerDto) {
         log.info("Logging in user");
         var response = this.customerService.login(customerDto);
