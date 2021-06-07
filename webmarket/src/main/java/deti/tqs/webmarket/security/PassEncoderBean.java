@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class PassEncoder {
+public class PassEncoderBean {
 
     @Bean
     public org.springframework.security.crypto.password.PasswordEncoder encoder() {
