@@ -36,7 +36,7 @@ class UserRepositoryTest {
     void whenFindUrlandoByEmail_ThenReturnUrlando() {
         this.testEntityManager.persistAndFlush(urlando);
 
-        User res = this.userRepository.findByEmail(urlando.getEmail());
+        User res = this.userRepository.findByEmail(urlando.getEmail()).get();
 
         Assertions.assertThat(res).isEqualTo(
                 urlando
@@ -47,7 +47,7 @@ class UserRepositoryTest {
     void whenFindUrlandoByUsername_ThenReturnUrlando() {
         this.testEntityManager.persistAndFlush(urlando);
 
-        User res = this.userRepository.findByUsername(urlando.getUsername());
+        User res = this.userRepository.findByUsername(urlando.getUsername()).get();
 
         Assertions.assertThat(res).isEqualTo(
                 urlando
