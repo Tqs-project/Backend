@@ -6,6 +6,7 @@ import deti.tqs.webmarket.model.Customer;
 import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.repository.CustomerRepository;
 import deti.tqs.webmarket.repository.UserRepository;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -136,14 +137,20 @@ class CustomerServiceImpTest {
         customer.setDescription(customerCreateDto.getDescription());
         customerFromDb.setDescription(customerCreateDto.getDescription());
 
+        customer.setUser(userWithId);
+        customer.setId(userWithId.getId());
+
         Mockito.when(encoder.encode(customerCreateDto.getPassword())).thenReturn(
                 customerCreateDto.getPassword() + "-encoded");
+
+        Mockito.when(userRepository.findByUsername(customerCreateDto.getUsername()))
+                .thenReturn(Optional.of(userWithId));
 
         Mockito.when(customerRepository.save(customer)).thenReturn(
                 customerFromDb
         );
 
-        assertThat(customerService.createCustomer(customerCreateDto)).isEqualTo(
+        assertThat(customerService.updateCustomer(customerCreateDto)).isEqualTo(
                 customerCreateDtoRet
         );
     }

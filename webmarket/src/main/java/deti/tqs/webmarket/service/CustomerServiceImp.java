@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.security.SecureRandom;
 import java.util.Optional;
-import java.util.Random;
 
 @Log4j2
 @Service

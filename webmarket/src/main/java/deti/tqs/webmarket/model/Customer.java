@@ -57,7 +57,7 @@ public class Customer {
     public String toString() {
         return "Customer{" +
                 "id=" + id +
-                ", user=" + user +
+                ", user=" + user.getId() +
                 ", address='" + address + '\'' +
                 ", description='" + description + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
