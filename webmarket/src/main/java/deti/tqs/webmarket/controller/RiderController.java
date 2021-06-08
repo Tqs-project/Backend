@@ -3,6 +3,7 @@ package deti.tqs.webmarket.controller;
 import deti.tqs.webmarket.dto.RiderDto;
 import deti.tqs.webmarket.model.Rider;
 import deti.tqs.webmarket.service.RiderService;
+import deti.tqs.webmarket.service.RiderServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @RequestMapping("/riders")
 public class RiderController {
     @Autowired
-    private RiderService service;
+    private RiderServiceImp service;
 
     @PostMapping("")
     public Rider createRider(@Valid @RequestBody RiderDto riderDto) throws Exception {
