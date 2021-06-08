@@ -7,5 +7,5 @@ import deti.tqs.webmarket.model.Rider;
 public interface RiderService {
     Rider registerRider(RiderDto riderDto) throws Exception;
     Rider updateRider(RiderDto riderDto);
-    TokenDto login(String email, String password);
+    TokenDto login(RiderDto riderDto);
 }
