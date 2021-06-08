@@ -21,15 +21,45 @@ public class OrderController {
     @Autowired
     private CustomerRepository customerRepository;
 
-    @PostMapping("")
+    @PostMapping
     public Order createOrder(@Valid @RequestBody OrderDto orderDto) throws Exception {
-        return orderService.createOrder(orderDto);
-    }
+        System.out.println(orderDto);
 
-    @GetMapping("")
+        Order o =orderService.createOrder(orderDto);
+        System.out.println(o.getCost() + " --- " + o.getId() + " --- " + o.getLocation() + " --- " + o.getOrderTimestamp());
+        return o;
+    }
+    /*
+    {
+    "paymentType": "MB",
+    "cost": 100,
+    "customer": {
+        "user": {
+            "username": "drinkUp",
+            "email": "drinkup@gmail.com",
+            "role": "CUSTOMER",
+            "password": "pass",
+            "phoneNumber": "+351 938736"
+        },
+        "address": "Aveiro",
+        "description": "drink's store",
+        "typeOfService": "Drinks",
+        "iban": "PT2383288"
+    },
+    "location": "Rua da Anadia",
+    }
+     */
+
+    /*
+    @GetMapping
     public List<Order> getOrders(@RequestParam int id){
         Customer customer = customerRepository.findById(id);
         
         return orderService.getAllOrdersByCustomer(customer);
+    }*/
+
+    @GetMapping
+    public String index() {
+        return "test";
     }
 }
