@@ -14,7 +14,7 @@ import java.util.List;
 
 @Log4j2
 @RestController
-@RequestMapping("/riders")
+@RequestMapping("/api/riders")
 public class RiderController {
     @Autowired
     private RiderServiceImp service;
