@@ -41,6 +41,9 @@ public class User {
     @PrimaryKeyJoinColumn
     private Customer customer;
 
+    // authentication purposes
+    private String authToken;
+
     public User() {}
 
     public User(String username, String email, String role, String password, String phoneNumber) {

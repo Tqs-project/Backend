@@ -117,7 +117,7 @@ class CustomerController_RestTemplateIT {
         );
 
         // verify if the token attribute was added to the customer row
-        List<Customer> found = customerRepository.findAll();
-        assertThat(found).extracting(Customer::getAuthToken).isNotNull();
+        var found = userRepository.findAll();
+        assertThat(found).extracting(User::getAuthToken).isNotNull();
     }
 }

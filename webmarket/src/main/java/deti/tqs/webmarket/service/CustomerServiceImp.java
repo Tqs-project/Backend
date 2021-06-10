@@ -94,9 +94,8 @@ public class CustomerServiceImp implements CustomerService{
         if (this.encoder.matches(customerDto.getPassword(), user.getPassword())) {
             var token = this.encoder.encode(String.valueOf(rand.nextDouble()));
 
-            var customer = user.getCustomer();
-            customer.setAuthToken(token);
-            this.customerRepository.save(customer);
+            user.setAuthToken(token);
+            this.userRepository.save(user);
 
             return new TokenDto(token, "");
         }

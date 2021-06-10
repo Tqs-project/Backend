@@ -37,9 +37,6 @@ public class Customer {
     @OneToMany(mappedBy = "customer")
     private List<Order> orders;
 
-    // authentication purposes
-    private String authToken;
-
     public Customer() {}
 
     public Customer(User user, String address, String description, String typeOfService, String iban) {
