@@ -77,8 +77,7 @@ class RiderController_RestTemplateIT {
                 rider.getVehiclePlate()
         );
     }
-
-
+    
     @Test
     void whenRiderMakesLogin_thenTheTokenShouldBePersistedOnDB() {
         // TODO change to saveandflush
