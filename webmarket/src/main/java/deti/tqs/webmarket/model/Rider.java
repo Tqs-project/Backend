@@ -54,13 +54,13 @@ public class Rider {
                 ", user=" + user +
                 ", vehiclePlate='" + vehiclePlate + '\'' +
                 ", comments=" + comments.stream().map(
-                (comment) -> comment.getId().toString()
+                comment -> comment.getId().toString()
         ).reduce("[", (partialString, identifier) -> partialString + ", " + identifier) + "]" +
                 ", lat='" + lat + '\'' +
                 ", lng='" + lng + '\'' +
                 ", busy=" + busy +
                 ", rides=" + rides.stream().map(
-                (ride) -> ride.getId().toString()
+                ride -> ride.getId().toString()
         ).reduce("[", (partialString, identifier) -> partialString + ", " + identifier) + "]" +
                 '}';
     }

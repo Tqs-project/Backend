@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "customer")
+@Table(name = "customers")
 public class Customer {
 
     @Id
@@ -37,6 +37,9 @@ public class Customer {
     @OneToMany(mappedBy = "customer")
     private List<Order> orders;
 
+    // authentication purposes
+    private String authToken;
+
     public Customer() {}
 
     public Customer(User user, String address, String description, String typeOfService, String iban) {
@@ -54,17 +57,17 @@ public class Customer {
     public String toString() {
         return "Customer{" +
                 "id=" + id +
-                ", user=" + user +
+                ", user=" + user.getId() +
                 ", address='" + address + '\'' +
                 ", description='" + description + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", typeOfService='" + typeOfService + '\'' +
                 ", iban='" + iban + '\'' +
                 ", comments=" + comments.stream().map(
-                (comment) -> comment.getId().toString()
+                comment -> comment.getId().toString()
         ).reduce("[", (partialString, identifier) -> partialString + ", " + identifier) + "]" +
                 ", orders=" + orders.stream().map(
-                (comment) -> comment.getId().toString()
+                comment -> comment.getId().toString()
         ).reduce("[", (partialString, identifier) -> partialString + ", " + identifier) + "]" +
                 '}';
     }
