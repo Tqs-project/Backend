@@ -18,13 +18,10 @@ public class RiderController {
     private RiderService riderService;
 
     @Autowired
-    private RideRepository rideRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
     @PostMapping("/ride/{id}/delivered")
-    public ResponseEntity<String> updateOrderDelivered(@PathVariable Long rideId,
+    public ResponseEntity<String> updateOrderDelivered(@PathVariable Long id,
                                                        @RequestHeader String idToken,
                                                        @RequestHeader String username) {
         /**
@@ -39,8 +36,8 @@ public class RiderController {
         if (!idToken.equals(user.get().getAuthToken()))
             return new ResponseEntity<>("Invalid token", HttpStatus.UNAUTHORIZED);
 
-        if (!riderService.updateOrderDelivered(rideId))
-            return new ResponseEntity<>("No ride with id: " + rideId, HttpStatus.NOT_FOUND);
+        if (!riderService.updateOrderDelivered(id))
+            return new ResponseEntity<>("No ride with id: " + id, HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>("Ride updated with success", HttpStatus.OK);
     }
