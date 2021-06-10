@@ -32,14 +32,15 @@ public class RiderServiceImp implements RiderService {
 
     private final SecureRandom rand = new SecureRandom();
 
-    public Rider registerRider(RiderDto riderDto) throws Exception {
+    public RiderDto registerRider(RiderDto riderDto) throws Exception {
         if (repository.existsByUser_Email(riderDto.getUser().getEmail())) {
             throw new Exception("That email is already in use!");
         } else {
             User user = new ModelMapper().map(riderDto.getUser(), User.class);
             user.setPassword(encoder.encode(riderDto.getUser().getPassword()));
             Rider rider = new Rider(user, riderDto.getVehiclePlate());
-            return repository.save(rider);
+            repository.save(rider);
+            return riderDto;
         }
     }
 
