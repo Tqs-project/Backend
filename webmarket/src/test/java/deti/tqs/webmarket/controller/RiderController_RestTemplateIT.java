@@ -83,11 +83,11 @@ class RiderController_RestTemplateIT {
     void whenRiderMakesLogin_thenTheTokenShouldBePersistedOnDB() {
         // TODO change to saveandflush
         ResponseEntity<RiderDto> response = restTemplate.postForEntity(
-                "/api/customer", rider, RiderDto.class
+                "/api/riders", rider, RiderDto.class
         );
 
         ResponseEntity<TokenDto> responseToken = restTemplate.postForEntity(
-                "/api/customer/signin", rider, TokenDto.class
+                "/api/riders/login", rider, TokenDto.class
         );
 
         assertThat(responseToken.getStatusCode()).isEqualTo(
