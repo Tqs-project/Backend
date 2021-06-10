@@ -1,6 +1,5 @@
 package deti.tqs.webmarket.controller;
 
-import deti.tqs.webmarket.repository.RideRepository;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.RiderService;
 import lombok.extern.log4j.Log4j2;
