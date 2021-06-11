@@ -8,6 +8,7 @@ import deti.tqs.webmarket.repository.CustomerRepository;
 import deti.tqs.webmarket.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,9 +43,6 @@ class CustomerController_RestTemplateIT {
 
     @BeforeEach
     void setUp() {
-        customerRepository.deleteAll();
-        userRepository.deleteAll();
-
         customer = new CustomerDto();
         customer.setUsername("Pedro");
         customer.setEmail("pedro@gmail.com");
@@ -60,7 +58,8 @@ class CustomerController_RestTemplateIT {
 
     @AfterEach
     void tearDown() {
-
+        customerRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -78,6 +77,7 @@ class CustomerController_RestTemplateIT {
                 customer.getIban()
         );
     }
+
 
     @Test
     void whenUpdateCustomer_thenTheCustomerShouldBeUpdatedOnDB() {

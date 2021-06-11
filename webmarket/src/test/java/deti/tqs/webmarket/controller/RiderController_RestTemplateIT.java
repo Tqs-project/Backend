@@ -75,7 +75,7 @@ class RiderController_RestTemplateIT {
         orderRepository.deleteAll();
         riderRepository.deleteAll();
         customerRepository.deleteAll();
-        orderRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -168,7 +168,7 @@ class RiderController_RestTemplateIT {
                 .containsOnly("DELIVERED");
     }
 
-    @Disabled
+    //@Disabled
     @Test
     void whenCreateRiderIsValid_thenCreateRider() {
         ResponseEntity<RiderDto> response = restTemplate.postForEntity(
@@ -185,7 +185,7 @@ class RiderController_RestTemplateIT {
         );
     }
 
-    @Disabled
+    //@Disabled
     @Test
     void whenRiderMakesLogin_thenTheTokenShouldBePersistedOnDB() {
         // TODO change to saveandflush
@@ -202,7 +202,7 @@ class RiderController_RestTemplateIT {
         );
 
         // verify if the token attribute was added to the customer row
-        List<Rider> found = riderRepository.findAll();
-        assertThat(found).extracting(Rider::getAuthToken).isNotNull();
+        List<User> found = userRepository.findAll();
+        assertThat(found).extracting(User::getAuthToken).isNotNull();
     }
 }

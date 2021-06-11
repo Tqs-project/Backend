@@ -46,7 +46,9 @@ public class RiderServiceImp implements RiderService {
             User user = new ModelMapper().map(riderDto.getUser(), User.class);
             user.setPassword(encoder.encode(riderDto.getUser().getPassword()));
             Rider rider = new Rider(user, riderDto.getVehiclePlate());
+            user.setRider(rider);
             repository.save(rider);
+            userRepository.save(user);
             return riderDto;
         }
     }
@@ -75,9 +77,8 @@ public class RiderServiceImp implements RiderService {
         if (this.encoder.matches(riderDto.getUser().getPassword(), user.getPassword())) {
             var token = this.encoder.encode(String.valueOf(rand.nextDouble()));
 
-            var rider = user.getRider();
-            rider.setAuthToken(token);
-            this.repository.save(rider);
+            user.setAuthToken(token);
+            this.userRepository.save(user);
 
             return new TokenDto(token, "");
         }

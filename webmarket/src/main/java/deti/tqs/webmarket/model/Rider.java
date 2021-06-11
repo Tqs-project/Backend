@@ -32,8 +32,6 @@ public class Rider {
 
     private Boolean busy;
 
-    private String authToken;
-
     @OneToMany(mappedBy = "rider")
     private List<Ride> rides;
 
