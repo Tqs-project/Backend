@@ -51,7 +51,7 @@ class RiderController_RestTemplateIT {
     private CustomerRepository customerRepository;
 
     private Order orderFromDB;
-    private Rider rider;
+    private Rider riderConcrete;
     private RiderDto rider;
     private UserDto user;
 
@@ -98,14 +98,14 @@ class RiderController_RestTemplateIT {
                 "935666125"
         );
 
-        rider = new Rider(
+        riderConcrete = new Rider(
                 user,
                 "aa-22-bb"
         );
-        rider.setBusy(true);
+        riderConcrete.setBusy(true);
         // TODO change to post and create rider
         user.setAuthToken("token");
-        user.setRider(rider);
+        user.setRider(riderConcrete);
 
         var customer = new Customer(
                 client,
@@ -127,12 +127,12 @@ class RiderController_RestTemplateIT {
                 "Far away from here"
         );
         order.setRide(ride);
-        ride.setRider(rider);
+        ride.setRider(riderConcrete);
 
         userRepository.saveAndFlush(client);
         userRepository.saveAndFlush(user);
         customerRepository.saveAndFlush(customer);
-        riderRepository.saveAndFlush(rider);
+        riderRepository.saveAndFlush(riderConcrete);
         orderFromDB = orderRepository.saveAndFlush(order);
         rideRepository.saveAndFlush(ride);
 
@@ -141,8 +141,8 @@ class RiderController_RestTemplateIT {
          */
 
         var headers = new HttpHeaders();
-        headers.set("username", rider.getUser().getUsername());
-        headers.set("idToken", rider.getUser().getAuthToken());
+        headers.set("username", riderConcrete.getUser().getUsername());
+        headers.set("idToken", riderConcrete.getUser().getAuthToken());
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         var response = restTemplate.postForEntity(

@@ -109,7 +109,7 @@ public class RiderServiceImp implements RiderService {
 
         orderRepository.save(order);
         rideRepository.save(ride);
-        riderRepository.save(rider);
+        repository.save(rider);
         return true;
     }
 

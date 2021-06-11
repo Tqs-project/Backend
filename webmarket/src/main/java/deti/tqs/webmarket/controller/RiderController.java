@@ -1,7 +1,6 @@
 package deti.tqs.webmarket.controller;
 
 import deti.tqs.webmarket.repository.UserRepository;
-import deti.tqs.webmarket.service.RiderService;
 import deti.tqs.webmarket.dto.RiderDto;
 import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.model.Rider;
@@ -19,10 +18,7 @@ import java.util.List;
 @RequestMapping("/api/riders")
 public class RiderController {
     @Autowired
-    private RiderServiceImp service;
-  
-    @Autowired
-    private RiderService riderService;
+    private RiderServiceImp riderService;
 
     @Autowired
     private UserRepository userRepository;
@@ -30,25 +26,26 @@ public class RiderController {
     @PostMapping("")
     public ResponseEntity<RiderDto> createRider(@RequestBody RiderDto riderDto) throws Exception {
         log.info("Saving rider " + riderDto.getUser().getUsername() + ".");
-        return new ResponseEntity<>(service.registerRider(riderDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(riderService.registerRider(riderDto), HttpStatus.CREATED);
     }
 
 
     @GetMapping("")
     public List<Rider> getRiders(){
-        return service.getAllRiders();
+        return riderService.getAllRiders();
     }
 
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@RequestBody RiderDto riderDto) {
         log.info("Logging in user");
-        var response = this.service.login(riderDto);
+        var response = this.riderService.login(riderDto);
 
         if (response.isEmpty())
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-    
+    }
+
     @PostMapping("/ride/{id}/delivered")
     public ResponseEntity<String> updateOrderDelivered(@PathVariable Long id,
                                                        @RequestHeader String idToken,

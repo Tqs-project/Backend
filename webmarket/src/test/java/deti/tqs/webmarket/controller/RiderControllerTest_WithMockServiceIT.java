@@ -3,6 +3,7 @@ package deti.tqs.webmarket.controller;
 import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.RiderService;
+import deti.tqs.webmarket.service.RiderServiceImp;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -32,7 +33,7 @@ class RiderControllerTest_WithMockServiceIT {
     private MockMvc mvc;
 
     @MockBean
-    private RiderService riderService;
+    private RiderServiceImp riderService;
 
     @MockBean
     private UserRepository userRepository;
@@ -66,7 +67,7 @@ class RiderControllerTest_WithMockServiceIT {
          */
 
         mvc.perform(
-                post("/api/rider/ride/1/delivered")
+                post("/api/riders/ride/1/delivered")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("username", "Foo")
         ).andExpect(status().isBadRequest())
@@ -83,7 +84,7 @@ class RiderControllerTest_WithMockServiceIT {
         );
 
         mvc.perform(
-                post("/api/rider/ride/1/delivered")
+                post("/api/riders/ride/1/delivered")
                         .contentType(MediaType.APPLICATION_JSON)
                 .header("username", user.getUsername())
                 .header("idToken", "tokensupersecret")
@@ -104,7 +105,7 @@ class RiderControllerTest_WithMockServiceIT {
         );
 
         mvc.perform(
-                post("/api/rider/ride/1/delivered")
+                post("/api/riders/ride/1/delivered")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("username", user.getUsername())
                         .header("idToken", "tokensupersecret")
@@ -129,7 +130,7 @@ class RiderControllerTest_WithMockServiceIT {
         );
 
         mvc.perform(
-                post("/api/rider/ride/12/delivered")
+                post("/api/riders/ride/12/delivered")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("username", user.getUsername())
                         .header("idToken", user.getAuthToken())
@@ -154,7 +155,7 @@ class RiderControllerTest_WithMockServiceIT {
         );
 
         mvc.perform(
-                post("/api/rider/ride/1/delivered")
+                post("/api/riders/ride/1/delivered")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("username", user.getUsername())
                         .header("idToken", user.getAuthToken())
