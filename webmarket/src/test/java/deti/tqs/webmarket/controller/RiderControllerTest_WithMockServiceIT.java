@@ -1,10 +1,16 @@
 package deti.tqs.webmarket.controller;
 
+import deti.tqs.webmarket.dto.CustomerDto;
+import deti.tqs.webmarket.dto.RiderDto;
+import deti.tqs.webmarket.dto.TokenDto;
+import deti.tqs.webmarket.dto.UserDto;
 import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.RiderService;
 import deti.tqs.webmarket.service.RiderServiceImp;
+import deti.tqs.webmarket.util.JsonUtil;
 import lombok.extern.log4j.Log4j2;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MissingRequestHeaderException;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,6 +47,9 @@ class RiderControllerTest_WithMockServiceIT {
 
     private User user;
 
+    private RiderDto rider;
+    private RiderDto riderResponse;
+
     @BeforeEach()
     void setup() {
         user = new User(
@@ -51,6 +61,26 @@ class RiderControllerTest_WithMockServiceIT {
         );
 
         user.setAuthToken("token-super-secret");
+
+        rider = new RiderDto(
+                new UserDto(
+                        "Albert",
+                        "albert@gmail.com",
+                        "RIDER",
+                        "password",
+                        "935666122"
+                ),
+                "TH-32-8J");
+
+        riderResponse = new RiderDto(
+                new UserDto(
+                        "Albert",
+                        "albert@gmail.com",
+                        "RIDER",
+                        "",
+                        "935666122"
+                ),
+                "TH-32-8J");
     }
 
     @AfterEach()
@@ -167,5 +197,57 @@ class RiderControllerTest_WithMockServiceIT {
 
         Mockito.verify(userRepository, Mockito.times(1)).findByUsername(user.getUsername());
         Mockito.verify(riderService, Mockito.times(1)).updateOrderDelivered(1L);
+    }
+
+    @Test
+    void whenPostRider_thenCreateRider() throws Exception{
+        Mockito.when(riderService.registerRider(rider))
+                .thenReturn(riderResponse);
+
+        mvc.perform(
+                post("/api/riders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.toJson(rider))
+        ).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.user.username", CoreMatchers.is(rider.getUser().getUsername())))
+                .andExpect(jsonPath("$.user.password", CoreMatchers.is("")))
+                .andExpect(jsonPath("$.user.role", CoreMatchers.is("RIDER")));
+
+        Mockito.verify(riderService, Mockito.times(1)).registerRider(rider);
+    }
+
+    @Test
+    void whenPostRiderLogin_ThenReturnToken() throws Exception {
+        var token = new TokenDto("encrypted-token", "");
+
+        Mockito.when(riderService.login(rider))
+                .thenReturn(token);
+
+        mvc.perform(
+                post("/api/riders/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.toJson(rider))
+        ).andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.token", CoreMatchers.is(token.getToken())));
+
+        Mockito.verify(riderService, Mockito.times(1)).login(rider);
+    }
+
+    @Test
+    void whenPostRiderLoginWithError_thenReturnEmptyToken() throws Exception {
+        var token = new TokenDto("", "Some error occurred");
+
+        Mockito.when(riderService.login(rider))
+                .thenReturn(token);
+
+        mvc.perform(
+                post("/api/riders/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.toJson(rider))
+        ).andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.token", CoreMatchers.is("")))
+                .andExpect(jsonPath("$.errorMessage", CoreMatchers.is(token.getErrorMessage())));
+
+        Mockito.verify(riderService, Mockito.times(1)).login(rider);
     }
 }

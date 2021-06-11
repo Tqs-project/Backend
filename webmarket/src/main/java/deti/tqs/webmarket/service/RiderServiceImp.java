@@ -1,5 +1,6 @@
 package deti.tqs.webmarket.service;
 
+import deti.tqs.webmarket.dto.UserDto;
 import deti.tqs.webmarket.repository.OrderRepository;
 import deti.tqs.webmarket.repository.RideRepository;
 import deti.tqs.webmarket.dto.RiderDto;
@@ -51,7 +52,10 @@ public class RiderServiceImp implements RiderService {
             user.setRider(rider);
             repository.saveAndFlush(rider);
             userRepository.saveAndFlush(user);
-            return riderDto;
+
+            UserDto responseUser = riderDto.getUser();
+            responseUser.setPassword("");
+            return new RiderDto(responseUser, riderDto.getVehiclePlate());
         }
     }
 
