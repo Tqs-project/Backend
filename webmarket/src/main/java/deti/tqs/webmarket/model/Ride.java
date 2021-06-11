@@ -14,7 +14,7 @@ public class Ride {
     @Column(name = "order_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "order_id")
     private Order order;
@@ -29,7 +29,7 @@ public class Ride {
     // ends when the order is updated to DELIVERED STATE
     private Timestamp timestampEnd;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_rider")
     private Rider rider;
 
