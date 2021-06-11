@@ -1,8 +1,6 @@
 package deti.tqs.webmarket.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -37,14 +35,10 @@ public class User {
     // riders and customers
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
-    @ToString.Exclude
-    @JsonIgnore
     private Rider rider;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
-    @ToString.Exclude
-    @JsonIgnore
     private Customer customer;
 
     public User() {}
