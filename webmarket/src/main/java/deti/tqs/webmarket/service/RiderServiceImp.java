@@ -49,8 +49,8 @@ public class RiderServiceImp implements RiderService {
             user.setPassword(encoder.encode(riderDto.getUser().getPassword()));
             Rider rider = new Rider(user, riderDto.getVehiclePlate());
             user.setRider(rider);
-            repository.save(rider);
-            userRepository.save(user);
+            repository.saveAndFlush(rider);
+            userRepository.saveAndFlush(user);
             return riderDto;
         }
     }
@@ -80,7 +80,7 @@ public class RiderServiceImp implements RiderService {
             var token = this.encoder.encode(String.valueOf(rand.nextDouble()));
 
             user.setAuthToken(token);
-            this.userRepository.save(user);
+            this.userRepository.saveAndFlush(user);
 
             return new TokenDto(token, "");
         }
@@ -110,9 +110,9 @@ public class RiderServiceImp implements RiderService {
         var rider = ride.getRider();
         rider.setBusy(false);
 
-        orderRepository.save(order);
-        rideRepository.save(ride);
-        repository.save(rider);
+        orderRepository.saveAndFlush(order);
+        rideRepository.saveAndFlush(ride);
+        repository.saveAndFlush(rider);
         return true;
     }
 

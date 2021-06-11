@@ -49,8 +49,8 @@ public class CustomerServiceImp implements CustomerService{
                 customerDto.getTypeOfService(),
                 customerDto.getIban()
         );
-        this.userRepository.save(user);
-        var ret = this.customerRepository.save(customer);
+        this.userRepository.saveAndFlush(user);
+        var ret = this.customerRepository.saveAndFlush(customer);
         return Utils.parseCustomerDto(ret);
     }
 
@@ -71,8 +71,8 @@ public class CustomerServiceImp implements CustomerService{
         customer.setTypeOfService(customerDto.getTypeOfService());
         customer.setIban(customerDto.getIban());
 
-        this.userRepository.save(user);
-        var ret = this.customerRepository.save(customer);
+        this.userRepository.saveAndFlush(user);
+        var ret = this.customerRepository.saveAndFlush(customer);
         return Utils.parseCustomerDto(ret);
     }
 
@@ -97,7 +97,7 @@ public class CustomerServiceImp implements CustomerService{
             var token = this.encoder.encode(String.valueOf(rand.nextDouble()));
 
             user.setAuthToken(token);
-            this.userRepository.save(user);
+            this.userRepository.saveAndFlush(user);
 
             return new TokenDto(token, "");
         }
