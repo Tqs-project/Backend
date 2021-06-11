@@ -134,7 +134,7 @@ class RiderController_RestTemplateIT {
                 HttpStatus.OK
         );
 
-        assertThat(response.getBody().toString()).isEqualTo(
+        assertThat(response.getBody()).hasToString(
                 "Ride updated with success"
         );
 
