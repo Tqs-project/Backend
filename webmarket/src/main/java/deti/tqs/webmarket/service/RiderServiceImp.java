@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import java.sql.Timestamp;
 
 @Log4j2
 @Service
+@Transactional
 public class RiderServiceImp implements RiderService {
     @Autowired
     private UserRepository userRepository;

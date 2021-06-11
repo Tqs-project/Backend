@@ -13,11 +13,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.security.SecureRandom;
 import java.util.Optional;
 
 @Log4j2
 @Service
+@Transactional
 public class CustomerServiceImp implements CustomerService{
 
     @Autowired
