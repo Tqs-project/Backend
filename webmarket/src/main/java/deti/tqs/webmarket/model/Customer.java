@@ -15,7 +15,7 @@ public class Customer {
     @Column(name = "user_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "user_id")
     private User user;
@@ -31,14 +31,11 @@ public class Customer {
     @Column(length = 33)
     private String iban;
 
-    @OneToMany(mappedBy = "commenter")
+    @OneToMany(mappedBy = "commenter", fetch = FetchType.LAZY)
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Order> orders;
-
-    // authentication purposes
-    private String authToken;
 
     public Customer() {}
 

@@ -1,6 +1,7 @@
 package deti.tqs.webmarket.service;
 
-
+import deti.tqs.webmarket.repository.OrderRepository;
+import deti.tqs.webmarket.repository.RideRepository;
 import deti.tqs.webmarket.dto.RiderDto;
 import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.model.Rider;
@@ -13,19 +14,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
+import java.sql.Timestamp;
 
 @Log4j2
 @Service
+@Transactional
 public class RiderServiceImp implements RiderService {
-
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private RiderRepository repository;
+
+    @Autowired
+    private RideRepository rideRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private PasswordEncoder encoder;
@@ -39,7 +48,9 @@ public class RiderServiceImp implements RiderService {
             User user = new ModelMapper().map(riderDto.getUser(), User.class);
             user.setPassword(encoder.encode(riderDto.getUser().getPassword()));
             Rider rider = new Rider(user, riderDto.getVehiclePlate());
+            user.setRider(rider);
             repository.save(rider);
+            userRepository.save(user);
             return riderDto;
         }
     }
@@ -68,13 +79,41 @@ public class RiderServiceImp implements RiderService {
         if (this.encoder.matches(riderDto.getUser().getPassword(), user.getPassword())) {
             var token = this.encoder.encode(String.valueOf(rand.nextDouble()));
 
-            var rider = user.getRider();
-            rider.setAuthToken(token);
-            this.repository.save(rider);
+            user.setAuthToken(token);
+            this.userRepository.save(user);
 
             return new TokenDto(token, "");
         }
         return new TokenDto("", "Bad authentication parameters");
+    }
+
+    @Override
+    public boolean updateOrderDelivered(Long rideId) {
+        /**
+         * the order must exist, check that on controller
+         * if the order is updated to DELIVERED
+         * then the timestampEnd of the ride should be initialized
+         * and obviously, the status of the order should be updated
+         *
+         * the rider now passes to not busy
+         */
+        var optRide = rideRepository.findById(rideId);
+        if (optRide.isEmpty())
+            return false;
+
+        var ride = optRide.get();
+        var order = ride.getOrder();
+
+        order.setStatus("DELIVERED");
+        ride.setTimestampEnd(new Timestamp(System.currentTimeMillis()));
+
+        var rider = ride.getRider();
+        rider.setBusy(false);
+
+        orderRepository.save(order);
+        rideRepository.save(ride);
+        repository.save(rider);
+        return true;
     }
 
     public Optional<Rider> getRiderByEmail(String email) {

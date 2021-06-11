@@ -13,11 +13,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.security.SecureRandom;
 import java.util.Optional;
 
 @Log4j2
 @Service
+@Transactional
 public class CustomerServiceImp implements CustomerService{
 
     @Autowired
@@ -94,9 +96,8 @@ public class CustomerServiceImp implements CustomerService{
         if (this.encoder.matches(customerDto.getPassword(), user.getPassword())) {
             var token = this.encoder.encode(String.valueOf(rand.nextDouble()));
 
-            var customer = user.getCustomer();
-            customer.setAuthToken(token);
-            this.customerRepository.save(customer);
+            user.setAuthToken(token);
+            this.userRepository.save(user);
 
             return new TokenDto(token, "");
         }

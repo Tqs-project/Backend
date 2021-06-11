@@ -15,14 +15,14 @@ public class Rider {
     @Column(name = "user_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "user_id")
     private User user;
 
     private String vehiclePlate;
 
-    @OneToMany(mappedBy = "rider")
+    @OneToMany(mappedBy = "rider", fetch = FetchType.LAZY)
     private List<Comment> comments;
 
     // location
@@ -32,9 +32,7 @@ public class Rider {
 
     private Boolean busy;
 
-    private String authToken;
-
-    @OneToMany(mappedBy = "rider")
+    @OneToMany(mappedBy = "rider", fetch = FetchType.LAZY)
     private List<Ride> rides;
 
     public Rider() {}
