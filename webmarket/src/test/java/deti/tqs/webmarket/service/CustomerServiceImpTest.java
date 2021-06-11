@@ -120,7 +120,7 @@ class CustomerServiceImpTest {
         Mockito.when(encoder.encode(customerCreateDto.getPassword())).thenReturn(
                 customerCreateDto.getPassword() + "-encoded");
 
-        Mockito.when(customerRepository.save(customer)).thenReturn(
+        Mockito.when(customerRepository.saveAndFlush(customer)).thenReturn(
                 customerFromDb
         );
 
@@ -145,7 +145,7 @@ class CustomerServiceImpTest {
         Mockito.when(userRepository.findByUsername(customerCreateDto.getUsername()))
                 .thenReturn(Optional.of(userWithId));
 
-        Mockito.when(customerRepository.save(customer)).thenReturn(
+        Mockito.when(customerRepository.saveAndFlush(customer)).thenReturn(
                 customerFromDb
         );
 
