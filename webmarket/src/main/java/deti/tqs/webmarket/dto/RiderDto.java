@@ -7,15 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class RiderDto {
 
-    private String username;
+    private UserDto user;
 
-    private String email;
+    private String vehiclePlate;
 
-    private String role;
-
-    private String password;
-
-    private String phoneNumber;
 }

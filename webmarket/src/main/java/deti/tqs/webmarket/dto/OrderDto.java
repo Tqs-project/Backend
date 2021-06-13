@@ -1,5 +1,7 @@
 package deti.tqs.webmarket.dto;
 
+import deti.tqs.webmarket.model.Comment;
+import deti.tqs.webmarket.model.Order;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,10 +10,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDto {
+    private Long id;
+
     private String paymentType;
+
     private double cost;
-    private CustomerDto customer;
+
+    private String username;
+
+    private String email;
+
     private String location;
+
+
 }
 
 

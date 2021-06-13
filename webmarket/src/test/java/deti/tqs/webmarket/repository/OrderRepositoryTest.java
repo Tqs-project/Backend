@@ -98,7 +98,7 @@ class OrderRepositoryTest {
         res.setStatus("INVALID");
 
         Assertions.assertThatThrownBy(
-            () -> this.entityManager.persistAndFlush(res)
+                () -> this.entityManager.persistAndFlush(res)
         ).isInstanceOf(PersistenceException.class);
     }
 

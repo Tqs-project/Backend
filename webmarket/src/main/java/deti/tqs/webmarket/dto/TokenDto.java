@@ -7,15 +7,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class TokenDto {
 
-    private String username;
+    private String token;
 
-    private String email;
+    private String errorMessage;
 
-    private String role;
-
-    private String password;
-
-    private String phoneNumber;
+    public boolean isEmpty() {
+        return token.isEmpty();
+    }
 }

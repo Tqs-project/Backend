@@ -1,65 +1,32 @@
 package deti.tqs.webmarket.controller;
 
 import deti.tqs.webmarket.dto.OrderDto;
-import deti.tqs.webmarket.model.Customer;
-import deti.tqs.webmarket.model.Order;
-import deti.tqs.webmarket.repository.CustomerRepository;
 import deti.tqs.webmarket.service.OrderService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.util.List;
-
+@Log4j2
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/order")
 public class OrderController {
 
     @Autowired
     private OrderService orderService;
 
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @PostMapping
-    public Order createOrder(@Valid @RequestBody OrderDto orderDto) throws Exception {
-        System.out.println(orderDto);
-
-        Order o =orderService.createOrder(orderDto);
-        System.out.println(o.getCost() + " --- " + o.getId() + " --- " + o.getLocation() + " --- " + o.getOrderTimestamp());
-        return o;
+    @PostMapping()
+    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderDto orderDto) {
+        log.info("Saving order " + orderDto.getLocation() + ".");
+        return new ResponseEntity<>(this.orderService.createOrder(orderDto),
+                HttpStatus.CREATED);
     }
-    /*
-    {
-    "paymentType": "MB",
-    "cost": 100,
-    "customer": {
-        "user": {
-            "username": "drinkUp",
-            "email": "drinkup@gmail.com",
-            "role": "CUSTOMER",
-            "password": "pass",
-            "phoneNumber": "+351 938736"
-        },
-        "address": "Aveiro",
-        "description": "drink's store",
-        "typeOfService": "Drinks",
-        "iban": "PT2383288"
-    },
-    "location": "Rua da Anadia",
-    }
-     */
 
-    /*
-    @GetMapping
-    public List<Order> getOrders(@RequestParam int id){
-        Customer customer = customerRepository.findById(id);
-        
-        return orderService.getAllOrdersByCustomer(customer);
+    /*@PutMapping()
+    public ResponseEntity<OrderDto> updateOrder(@RequestBody OrderDto orderDto) {
+        log.info(String.format("Updating order %s.", orderDto.getLocation()));
+        return new ResponseEntity<>(this.orderService.createOrder(orderDto),
+                HttpStatus.OK);
     }*/
-
-    @GetMapping
-    public String index() {
-        return "test";
-    }
 }

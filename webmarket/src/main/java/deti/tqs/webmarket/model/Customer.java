@@ -8,14 +8,14 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "customer")
+@Table(name = "customers")
 public class Customer {
 
     @Id
     @Column(name = "user_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "user_id")
     private User user;
@@ -31,10 +31,10 @@ public class Customer {
     @Column(length = 33)
     private String iban;
 
-    @OneToMany(mappedBy = "commenter")
+    @OneToMany(mappedBy = "commenter", fetch = FetchType.LAZY)
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Order> orders;
 
     public Customer() {}
@@ -54,17 +54,17 @@ public class Customer {
     public String toString() {
         return "Customer{" +
                 "id=" + id +
-                ", user=" + user +
+                ", user=" + user.getId() +
                 ", address='" + address + '\'' +
                 ", description='" + description + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", typeOfService='" + typeOfService + '\'' +
                 ", iban='" + iban + '\'' +
                 ", comments=" + comments.stream().map(
-                (comment) -> comment.getId().toString()
+                comment -> comment.getId().toString()
         ).reduce("[", (partialString, identifier) -> partialString + ", " + identifier) + "]" +
                 ", orders=" + orders.stream().map(
-                (comment) -> comment.getId().toString()
+                comment -> comment.getId().toString()
         ).reduce("[", (partialString, identifier) -> partialString + ", " + identifier) + "]" +
                 '}';
     }

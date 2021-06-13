@@ -1,37 +1,45 @@
 package deti.tqs.webmarket.controller;
 
 import deti.tqs.webmarket.dto.CustomerDto;
-import deti.tqs.webmarket.model.Customer;
-import deti.tqs.webmarket.repository.CustomerRepository;
+import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.service.CustomerService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
+@Log4j2
 @RestController
-@RequestMapping("/customers")
+@RequestMapping("/api/customer")
 public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
 
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @PostMapping
-    public Customer createCustomer(@Valid @RequestBody CustomerDto customerDto) throws Exception {
-        System.out.println(customerDto);
-
-        Customer c =customerService.createCustomer(customerDto);
-        System.out.println(c.getId() + c.getAddress() + " --- " + c.getIban() + " --- " + c.getTypeOfService() + " --- " + c.getDescription());
-        return c;
+    @PostMapping()
+    public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customerDto) {
+        log.info("Saving customer " + customerDto.getUsername() + ".");
+        return new ResponseEntity<>(this.customerService.createCustomer(customerDto),
+                HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public Customer getCustomers(@RequestParam int id){
-        Customer customer = customerRepository.findById(id);
-        System.out.println(customer.getId());
-        return  customer;
+    @PutMapping()
+    public ResponseEntity<CustomerDto> updateCustomer(@RequestBody CustomerDto customerDto) {
+        log.info(String.format("Updating customer %s.", customerDto.getUsername()));
+        return new ResponseEntity<>(this.customerService.updateCustomer(customerDto),
+                HttpStatus.OK);
     }
+
+    @PostMapping("/signin")
+    public ResponseEntity<TokenDto> login(@RequestBody CustomerDto customerDto) {
+        log.info("Logging in user");
+        var response = this.customerService.login(customerDto);
+
+        if (response.isEmpty())
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
 }

@@ -15,14 +15,14 @@ public class Rider {
     @Column(name = "user_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "user_id")
     private User user;
 
     private String vehiclePlate;
 
-    @OneToMany(mappedBy = "rider")
+    @OneToMany(mappedBy = "rider", fetch = FetchType.LAZY)
     private List<Comment> comments;
 
     // location
@@ -32,7 +32,7 @@ public class Rider {
 
     private Boolean busy;
 
-    @OneToMany(mappedBy = "rider")
+    @OneToMany(mappedBy = "rider", fetch = FetchType.LAZY)
     private List<Ride> rides;
 
     public Rider() {}
@@ -52,13 +52,13 @@ public class Rider {
                 ", user=" + user +
                 ", vehiclePlate='" + vehiclePlate + '\'' +
                 ", comments=" + comments.stream().map(
-                (comment) -> comment.getId().toString()
+                comment -> comment.getId().toString()
         ).reduce("[", (partialString, identifier) -> partialString + ", " + identifier) + "]" +
                 ", lat='" + lat + '\'' +
                 ", lng='" + lng + '\'' +
                 ", busy=" + busy +
                 ", rides=" + rides.stream().map(
-                (ride) -> ride.getId().toString()
+                ride -> ride.getId().toString()
         ).reduce("[", (partialString, identifier) -> partialString + ", " + identifier) + "]" +
                 '}';
     }

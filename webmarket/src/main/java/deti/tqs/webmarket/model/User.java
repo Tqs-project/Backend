@@ -1,6 +1,8 @@
 package deti.tqs.webmarket.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -25,7 +27,6 @@ public class User {
     @Column(columnDefinition = "VARCHAR(20) CHECK (role IN ('ADMIN', 'RIDER', 'CUSTOMER'))")
     private String role;
 
-    // TODO encrypt password
     @Column(nullable = false)
     private String password;
 
@@ -34,13 +35,20 @@ public class User {
     private String phoneNumber;
 
     // riders and customers
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn
+    @ToString.Exclude
+    @JsonIgnore
     private Rider rider;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn
+    @ToString.Exclude
+    @JsonIgnore
     private Customer customer;
+
+    // authentication purposes
+    private String authToken;
 
     public User() {}
 

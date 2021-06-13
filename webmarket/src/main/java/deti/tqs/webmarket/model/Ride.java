@@ -14,7 +14,7 @@ public class Ride {
     @Column(name = "order_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "order_id")
     private Order order;
@@ -23,11 +23,13 @@ public class Ride {
 
     //private Double tripDistance;
 
+    // starts when the rider accepts the order
     private Timestamp timestampInit;
 
+    // ends when the order is updated to DELIVERED STATE
     private Timestamp timestampEnd;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_rider")
     private Rider rider;
 
@@ -36,7 +38,5 @@ public class Ride {
     public Ride(Order order, String destination) {
         this.order = order;
         this.destination = destination;
-
-        this.timestampInit = new Timestamp(System.currentTimeMillis());
     }
 }
