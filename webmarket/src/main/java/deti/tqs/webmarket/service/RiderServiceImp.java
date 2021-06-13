@@ -10,7 +10,6 @@ import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.repository.RiderRepository;
 import deti.tqs.webmarket.repository.UserRepository;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,15 +45,21 @@ public class RiderServiceImp implements RiderService {
         if (repository.existsByUser_Email(riderDto.getUser().getEmail())) {
             throw new Exception("That email is already in use!");
         } else {
-            User user = new ModelMapper().map(riderDto.getUser(), User.class);
-            user.setPassword(encoder.encode(riderDto.getUser().getPassword()));
-            Rider rider = new Rider(user, riderDto.getVehiclePlate());
+            var user = new User(
+                    riderDto.getUser().getUsername(),
+                    riderDto.getUser().getEmail(),
+                    "RIDER",
+                    encoder.encode(riderDto.getUser().getPassword()),
+                    riderDto.getUser().getPhoneNumber()
+            );
+            var rider = new Rider(user, riderDto.getVehiclePlate());
             user.setRider(rider);
             repository.saveAndFlush(rider);
             userRepository.saveAndFlush(user);
 
             UserDto responseUser = riderDto.getUser();
             responseUser.setPassword("");
+            responseUser.setRole("RIDER");
             return new RiderDto(responseUser, riderDto.getVehiclePlate());
         }
     }

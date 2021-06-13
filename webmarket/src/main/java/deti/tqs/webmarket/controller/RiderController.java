@@ -1,5 +1,7 @@
 package deti.tqs.webmarket.controller;
 
+import deti.tqs.webmarket.dto.CustomerLoginDto;
+import deti.tqs.webmarket.dto.UserDto;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.dto.RiderDto;
 import deti.tqs.webmarket.dto.TokenDto;
@@ -36,9 +38,17 @@ public class RiderController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody RiderDto riderDto) {
+    public ResponseEntity<TokenDto> login(@RequestBody CustomerLoginDto riderDto) {
         log.info("Logging in user");
-        var response = this.riderService.login(riderDto);
+
+        var rider = new RiderDto();
+        var user = new UserDto();
+        user.setUsername(riderDto.getUsername());
+        user.setEmail(riderDto.getEmail());
+        user.setPassword(riderDto.getPassword());
+        rider.setUser(user);
+
+        var response = this.riderService.login(rider);
 
         if (response.isEmpty())
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
