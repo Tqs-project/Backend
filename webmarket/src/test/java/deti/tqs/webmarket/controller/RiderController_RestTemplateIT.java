@@ -1,5 +1,6 @@
 package deti.tqs.webmarket.controller;
 
+import deti.tqs.webmarket.dto.CustomerLoginDto;
 import deti.tqs.webmarket.model.*;
 import deti.tqs.webmarket.repository.*;
 import deti.tqs.webmarket.dto.RiderDto;
@@ -193,8 +194,14 @@ class RiderController_RestTemplateIT {
                 "/api/riders", rider, RiderDto.class
         );
 
+        var login = new CustomerLoginDto(
+                rider.getUser().getUsername(),
+                rider.getUser().getEmail(),
+                rider.getUser().getPassword()
+        );
+
         ResponseEntity<TokenDto> responseToken = restTemplate.postForEntity(
-                "/api/riders/login", rider, TokenDto.class
+                "/api/riders/login", login, TokenDto.class
         );
 
         assertThat(responseToken.getStatusCode()).isEqualTo(

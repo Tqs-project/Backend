@@ -1,6 +1,8 @@
 package deti.tqs.webmarket.controller;
 
+import deti.tqs.webmarket.dto.CustomerCreateDto;
 import deti.tqs.webmarket.dto.CustomerDto;
+import deti.tqs.webmarket.dto.CustomerLoginDto;
 import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.service.CustomerService;
 import deti.tqs.webmarket.util.JsonUtil;
@@ -34,6 +36,7 @@ class CustomerController_WithMockServiceIT {
 
     private CustomerDto customer;
     private CustomerDto customerResponse;
+    private CustomerCreateDto customerCreate;
 
     @BeforeEach
     void setUp() {
@@ -52,6 +55,16 @@ class CustomerController_WithMockServiceIT {
                 new ArrayList<>(),
                 new ArrayList<>()
         );
+
+        customerCreate = new CustomerCreateDto();
+        customerCreate.setUsername(customerResponse.getUsername());
+        customerCreate.setEmail(customerResponse.getEmail());
+        customerCreate.setPassword("password");
+        customerCreate.setPhoneNumber(customerResponse.getPhoneNumber());
+        customerCreate.setAddress(customerResponse.getAddress());
+        customerCreate.setDescription(customerResponse.getDescription());
+        customerCreate.setTypeOfService(customerResponse.getTypeOfService());
+        customerCreate.setIban(customerResponse.getIban());
 
         customer = new CustomerDto();
         customer.setUsername(customerResponse.getUsername());
@@ -76,7 +89,7 @@ class CustomerController_WithMockServiceIT {
         mvc.perform(
                 post("/api/customer")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.toJson(customer))
+                .content(JsonUtil.toJson(customerCreate))
         ).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username", CoreMatchers.is(customer.getUsername())))
                 .andExpect(jsonPath("$.password", CoreMatchers.is("")))
@@ -87,6 +100,7 @@ class CustomerController_WithMockServiceIT {
 
     @Test
     void whenPutCustomer_thenReturnCustomerUpdated() throws Exception {
+        customerCreate.setDescription("A brand new description");
         customer.setDescription("A brand new description");
         customerResponse.setDescription("A brand new description");
         Mockito.when(customerService.updateCustomer(customer))
@@ -95,10 +109,10 @@ class CustomerController_WithMockServiceIT {
         mvc.perform(
                 put("/api/customer")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.toJson(customer))
+                .content(JsonUtil.toJson(customerCreate))
         ).andExpect(status().isOk())
-                .andExpect(jsonPath("$.username", CoreMatchers.is(customer.getUsername())))
-                .andExpect(jsonPath("$.description", CoreMatchers.is(customer.getDescription())));
+                .andExpect(jsonPath("$.username", CoreMatchers.is(customerCreate.getUsername())))
+                .andExpect(jsonPath("$.description", CoreMatchers.is(customerCreate.getDescription())));
 
         Mockito.verify(customerService, Mockito.times(1)).updateCustomer(customer);
     }
@@ -107,34 +121,56 @@ class CustomerController_WithMockServiceIT {
     void whenPostCustomerLogin_ThenReturnToken() throws Exception {
         var token = new TokenDto("encrypted-token", "");
 
-        Mockito.when(customerService.login(customer))
+        var login = new CustomerLoginDto(
+                customer.getUsername(),
+                customer.getEmail(),
+                customer.getPassword()
+        );
+
+        var customerLogin = new CustomerDto();
+        customerLogin.setUsername(login.getUsername());
+        customerLogin.setEmail(login.getEmail());
+        customerLogin.setPassword(login.getPassword());
+
+        Mockito.when(customerService.login(customerLogin))
                 .thenReturn(token);
 
         mvc.perform(
                 post("/api/customer/signin")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.toJson(customer))
+                .content(JsonUtil.toJson(login))
         ).andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.token", CoreMatchers.is(token.getToken())));
 
-        Mockito.verify(customerService, Mockito.times(1)).login(customer);
+        Mockito.verify(customerService, Mockito.times(1)).login(customerLogin);
     }
 
     @Test
     void whenPostCustomerLoginWithError_thenReturnEmptyToken() throws Exception {
         var token = new TokenDto("", "Some error occurred");
 
-        Mockito.when(customerService.login(customer))
+        var login = new CustomerLoginDto(
+                customer.getUsername(),
+                customer.getEmail(),
+                customer.getPassword()
+        );
+
+        var customerLogin = new CustomerDto();
+        customerLogin.setUsername(login.getUsername());
+        customerLogin.setEmail(login.getEmail());
+        customerLogin.setPassword(login.getPassword());
+
+        Mockito.when(customerService.login(customerLogin))
                 .thenReturn(token);
 
         mvc.perform(
                 post("/api/customer/signin")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.toJson(customer))
+                .content(JsonUtil.toJson(login))
         ).andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.token", CoreMatchers.is("")))
             .andExpect(jsonPath("$.errorMessage", CoreMatchers.is(token.getErrorMessage())));
 
-        Mockito.verify(customerService, Mockito.times(1)).login(customer);
+        Mockito.verify(customerService, Mockito.times(1)).login(customerLogin);
     }
 }

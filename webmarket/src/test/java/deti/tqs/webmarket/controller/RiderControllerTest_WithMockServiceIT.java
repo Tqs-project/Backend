@@ -1,9 +1,6 @@
 package deti.tqs.webmarket.controller;
 
-import deti.tqs.webmarket.dto.CustomerDto;
-import deti.tqs.webmarket.dto.RiderDto;
-import deti.tqs.webmarket.dto.TokenDto;
-import deti.tqs.webmarket.dto.UserDto;
+import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.RiderService;
@@ -23,7 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MissingRequestHeaderException;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -220,34 +216,62 @@ class RiderControllerTest_WithMockServiceIT {
     void whenPostRiderLogin_ThenReturnToken() throws Exception {
         var token = new TokenDto("encrypted-token", "");
 
-        Mockito.when(riderService.login(rider))
+        var login = new CustomerLoginDto(
+                rider.getUser().getUsername(),
+                rider.getUser().getEmail(),
+                rider.getUser().getPassword()
+        );
+
+        var riderForServiceClass = new RiderDto();
+        var user = new UserDto();
+        user.setUsername(login.getUsername());
+        user.setEmail(login.getEmail());
+        user.setPassword(login.getPassword());
+
+        riderForServiceClass.setUser(user);
+
+        Mockito.when(riderService.login(riderForServiceClass))
                 .thenReturn(token);
 
         mvc.perform(
                 post("/api/riders/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.toJson(rider))
+                        .content(JsonUtil.toJson(login))
         ).andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.token", CoreMatchers.is(token.getToken())));
 
-        Mockito.verify(riderService, Mockito.times(1)).login(rider);
+        Mockito.verify(riderService, Mockito.times(1)).login(riderForServiceClass);
     }
 
     @Test
     void whenPostRiderLoginWithError_thenReturnEmptyToken() throws Exception {
         var token = new TokenDto("", "Some error occurred");
 
-        Mockito.when(riderService.login(rider))
+        var login = new CustomerLoginDto(
+                rider.getUser().getUsername(),
+                rider.getUser().getEmail(),
+                rider.getUser().getPassword()
+        );
+
+        var riderForServiceClass = new RiderDto();
+        var user = new UserDto();
+        user.setUsername(login.getUsername());
+        user.setEmail(login.getEmail());
+        user.setPassword(login.getPassword());
+
+        riderForServiceClass.setUser(user);
+
+        Mockito.when(riderService.login(riderForServiceClass))
                 .thenReturn(token);
 
         mvc.perform(
                 post("/api/riders/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.toJson(rider))
+                        .content(JsonUtil.toJson(login))
         ).andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.token", CoreMatchers.is("")))
                 .andExpect(jsonPath("$.errorMessage", CoreMatchers.is(token.getErrorMessage())));
 
-        Mockito.verify(riderService, Mockito.times(1)).login(rider);
+        Mockito.verify(riderService, Mockito.times(1)).login(riderForServiceClass);
     }
 }

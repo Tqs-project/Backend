@@ -70,7 +70,7 @@ public class CustomerController {
         var customer = new CustomerDto();
         customer.setUsername(customerDto.getUsername());
         customer.setEmail(customerDto.getEmail());
-        customer.setPassword(customer.getPassword());
+        customer.setPassword(customerDto.getPassword());
 
         var response = this.customerService.login(customer);
 

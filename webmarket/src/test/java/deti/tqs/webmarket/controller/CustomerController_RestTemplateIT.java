@@ -1,6 +1,8 @@
 package deti.tqs.webmarket.controller;
 
+import deti.tqs.webmarket.dto.CustomerCreateDto;
 import deti.tqs.webmarket.dto.CustomerDto;
+import deti.tqs.webmarket.dto.CustomerLoginDto;
 import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.model.Customer;
 import deti.tqs.webmarket.model.User;
@@ -38,11 +40,11 @@ class CustomerController_RestTemplateIT {
     @Autowired
     private UserRepository userRepository;
 
-    private CustomerDto customer;
+    private CustomerCreateDto customer;
 
     @BeforeEach
     void setUp() {
-        customer = new CustomerDto();
+        customer = new CustomerCreateDto();
         customer.setUsername("Pedro");
         customer.setEmail("pedro@gmail.com");
         customer.setPassword("password");
@@ -107,6 +109,11 @@ class CustomerController_RestTemplateIT {
                 "/api/customer", customer, CustomerDto.class
         );
 
+        var login = new CustomerLoginDto(
+                customer.getUsername(),
+                null,
+                customer.getPassword()
+        );
         ResponseEntity<TokenDto> responseToken = restTemplate.postForEntity(
                 "/api/customer/signin", customer, TokenDto.class
         );
