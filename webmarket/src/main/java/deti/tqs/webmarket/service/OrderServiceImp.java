@@ -35,7 +35,6 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     public OrderDto createOrder(OrderDto orderDto){
-
         var user = this.userRepository.findByUsername(orderDto.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException("No user with username " + orderDto.getUsername() + ".")
         );
@@ -92,3 +91,4 @@ public class OrderServiceImp implements OrderService {
             ordersCache.addOrderToQueue(order.getId());
     }
 }
+

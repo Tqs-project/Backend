@@ -49,7 +49,8 @@ public class CustomerServiceImp implements CustomerService{
                 customerDto.getTypeOfService(),
                 customerDto.getIban()
         );
-        this.userRepository.saveAndFlush(user);
+
+        this.userRepository.save(user);
         var ret = this.customerRepository.saveAndFlush(customer);
         return Utils.parseCustomerDto(ret);
     }

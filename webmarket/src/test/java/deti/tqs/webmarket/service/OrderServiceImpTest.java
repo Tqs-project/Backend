@@ -1,6 +1,7 @@
 package deti.tqs.webmarket.service;
 
 import deti.tqs.webmarket.cache.OrdersCache;
+import deti.tqs.webmarket.dto.CustomerDto;
 import deti.tqs.webmarket.dto.OrderDto;
 import deti.tqs.webmarket.model.Customer;
 import deti.tqs.webmarket.model.Order;
@@ -20,7 +21,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImpTest {
@@ -40,8 +43,12 @@ class OrderServiceImpTest {
     @InjectMocks
     private OrderServiceImp orderServiceImp;
 
-    private Order order;
+
+    private User user;
     private Customer customer;
+
+    private CustomerDto customerCreateDto;
+
     private OrderDto orderCreateDto;
 
     private User userAssignment1;
@@ -50,13 +57,54 @@ class OrderServiceImpTest {
     private User userAssignment4;
     private Order orderAssignment;
 
+    private OrderDto orderCreateDtoRet;
+    private Order order;
+    private Order orderFromDB;
+
     @BeforeEach
     void setUp() {
+        user = new User("Maria", "maria@gmail.com", "CUSTOMER", "", "935111111");
+        user.setId(3L);
+        customer = new Customer(user, "Front Street", "Wonderful coffee shop", "Coffee", "PT50000201231234567890155");
+        customer.setId(user.getId());
+        user.setCustomer(customer);
+
+        customerCreateDto = new CustomerDto(
+                3L,
+                "Maria",
+                "maria@gmail.com",
+                "CUSTOMER",
+                "",
+                "935111111",
+                "Front Street",
+                "Wonderful coffee shop",
+                null,
+                "Coffee",
+                "PT50000201231234567890155",
+                new ArrayList<>(),
+                new ArrayList<>()
+        );
+
         orderCreateDto = new OrderDto();
         orderCreateDto.setId(4L);
         orderCreateDto.setPaymentType("MB");
+        orderCreateDto.setCost(15.6);
         orderCreateDto.setUsername("Maria");
         orderCreateDto.setLocation("Rua da Macieira, 15");
+
+        orderCreateDtoRet = new OrderDto();
+        orderCreateDtoRet.setId(4L);
+        orderCreateDtoRet.setPaymentType("MB");
+        orderCreateDtoRet.setCost(15.6);
+        orderCreateDtoRet.setUsername("Maria");
+        orderCreateDtoRet.setLocation("Rua da Macieira, 15");
+        orderCreateDtoRet.setStatus("WAITING");
+        orderCreateDtoRet.setCustomer_id(3L);
+
+        order = new Order(orderCreateDto.getPaymentType(), orderCreateDto.getCost(), customer, orderCreateDto.getLocation());
+
+        orderFromDB = new Order(orderCreateDto.getPaymentType(), orderCreateDto.getCost(), customer, orderCreateDto.getLocation());
+        orderFromDB.setId(orderCreateDto.getId());
 
         orderAssignment = new Order();
         orderAssignment.setId(22L);
@@ -84,8 +132,13 @@ class OrderServiceImpTest {
     }
 
     @Test
-    void createOrder() {
+    void createOrder_AddToDB_Test() {
+        Mockito.when(userRepository.findByUsername("Maria")).thenReturn(java.util.Optional.ofNullable(user));
+        Mockito.when(orderRepository.save(Mockito.any(Order.class))).thenReturn(orderFromDB);
 
+        var res = orderServiceImp.createOrder(orderCreateDto);
+        res.setOrderTimestamp(null);
+        assertThat(res).isEqualTo(orderCreateDtoRet);
     }
 
     @Test
