@@ -53,7 +53,7 @@ public class Utils {
     }
 
     public static OrderDto parseOrderDto(Order order) {
-        System.out.println("HHHH \n"+order);
+
         OrderDto orderDto =new OrderDto(
                 order.getId(),
                 order.getPaymentType(),
@@ -62,7 +62,7 @@ public class Utils {
                 order.getCustomer().getUser().getEmail(),
                 order.getLocation()
         );
-        System.out.println("LLLL\n"+ orderDto);
+
         return orderDto;
     }
 }

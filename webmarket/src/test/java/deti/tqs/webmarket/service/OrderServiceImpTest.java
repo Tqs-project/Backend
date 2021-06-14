@@ -105,7 +105,7 @@ class OrderServiceImpTest {
 
     @Test
     void createOrder_AddToDB_Test() {
-        Mockito.when(userRepository.findByUsername("Maria")).thenReturn(java.util.Optional.ofNullable(user));
+        Mockito.when(userRepository.findByEmail("maria@gmail.com")).thenReturn(java.util.Optional.ofNullable(user));
         Mockito.when(customerRepository.findByUser_Email("maria@gmail.com")).thenReturn(customer);
         Mockito.when(orderRepository.save(Mockito.any(Order.class))).thenReturn(orderFromDB);
         assertThat(orderServiceImp.createOrder(orderCreateDto)).isEqualTo(orderCreateDtoRet);
