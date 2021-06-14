@@ -34,7 +34,6 @@ class OrderServiceImpTest {
         orderCreateDto.setId(4L);
         orderCreateDto.setPaymentType("MB");
         orderCreateDto.setUsername("Maria");
-        orderCreateDto.setEmail("maria@gmail.com");
         orderCreateDto.setLocation("Rua da Macieira, 15");
 
     }

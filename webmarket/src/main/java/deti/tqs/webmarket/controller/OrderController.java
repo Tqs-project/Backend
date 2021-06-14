@@ -1,5 +1,6 @@
 package deti.tqs.webmarket.controller;
 
+import deti.tqs.webmarket.dto.OrderCreateDto;
 import deti.tqs.webmarket.dto.OrderDto;
 import deti.tqs.webmarket.service.OrderService;
 import lombok.extern.log4j.Log4j2;
@@ -17,9 +18,14 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping()
-    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderDto orderDto) {
+    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderCreateDto orderDto) {
         log.info("Saving order " + orderDto.getLocation() + ".");
-        return new ResponseEntity<>(this.orderService.createOrder(orderDto),
+        var order = new OrderDto();
+        order.setUsername(orderDto.getUsername());
+        order.setPaymentType(order.getPaymentType());
+        order.setCost(orderDto.getCost());
+        order.setLocation(orderDto.getLocation());
+        return new ResponseEntity<>(this.orderService.createOrder(order),
                 HttpStatus.CREATED);
     }
 

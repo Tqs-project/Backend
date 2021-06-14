@@ -1,5 +1,6 @@
 package deti.tqs.webmarket.cache;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,5 +31,15 @@ class OrdersCacheTest {
                 cache.riderHasNewAssignments(rider)
         ).isFalse();
 
+    }
+
+    @Test
+    void testQueue() {
+        cache.addOrderToQueue(1L);
+        cache.addOrderToQueue(2L);
+
+        Assertions.assertThat(
+                cache.getOrderFromQueue()
+        ).isEqualTo(1L);
     }
 }

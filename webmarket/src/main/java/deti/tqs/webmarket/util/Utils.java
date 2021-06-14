@@ -55,11 +55,14 @@ public class Utils {
     public static OrderDto parseOrderDto(Order order) {
         return new OrderDto(
                 order.getId(),
+                order.getOrderTimestamp(),
                 order.getPaymentType(),
+                order.getStatus(),
                 order.getCost(),
-                order.getCustomer().getUser().getUsername(),
-                order.getCustomer().getUser().getEmail(),
-                order.getLocation()
+                order.getLocation(),
+                order.getCustomer() == null ? null : order.getCustomer().getId(),
+                order.getCustomer() == null ? null : order.getCustomer().getUser().getUsername(),
+                order.getRide() == null ? null : order.getRide().getId()
         );
     }
 }

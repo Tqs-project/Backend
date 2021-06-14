@@ -3,6 +3,8 @@ package deti.tqs.webmarket.cache;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 @Component
 public class OrdersCache {
@@ -16,9 +18,11 @@ public class OrdersCache {
      * And after that, he can accept or decline the order
      */
     private HashMap<String, Long> ordersCache;
+    private Queue<Long> waitingOrdersQueue;
 
     public OrdersCache() {
         ordersCache = new HashMap<>();
+        waitingOrdersQueue = new LinkedList<>();
     }
 
     public void assignOrder(String usernameRider, Long orderId) {
@@ -32,4 +36,8 @@ public class OrdersCache {
     public boolean riderHasNewAssignments(String usernameRider) {
         return this.ordersCache.containsKey(usernameRider);
     }
+
+    public void addOrderToQueue(Long orderId) { this.waitingOrdersQueue.add(orderId); }
+
+    public Long getOrderFromQueue() { return this.waitingOrdersQueue.remove(); }
 }
