@@ -160,4 +160,53 @@ class UserRepositoryTest {
                 this.userRepository.findAllByRole("RIDER")
         ).contains(user1, user2).doesNotContain(user3);
     }
+
+    @Test
+    void getRidersLogged_shouldReturnAllTheRidersWithLogin() {
+        var user1 = new User(
+                "user1",
+                "user1@mail.com",
+                "RIDER",
+                "password",
+                "111111111"
+        );
+        user1.setAuthToken("not null");
+
+        var user2 = new User(
+                "user2",
+                "user2@mail.com",
+                "RIDER",
+                "password",
+                "111111111"
+        );
+        user2.setAuthToken("also not null");
+
+        // check RIDER constraint
+        var user3 = new User(
+                "user3",
+                "user3@mail.com",
+                "CUSTOMER",
+                "password",
+                "111111111"
+        );
+
+        // check auth_token null constraint
+        var user4 = new User(
+                "user4",
+                "user4@mail.com",
+                "RIDER",
+                "password",
+                "111111111"
+        );
+
+        this.testEntityManager.persist(user1);
+        this.testEntityManager.persist(user2);
+        this.testEntityManager.persist(user3);
+        this.testEntityManager.persist(user4);
+        this.testEntityManager.flush();
+
+        Assertions.assertThat(
+                this.userRepository.getRidersLogged()
+        ).contains(user1, user2).doesNotContain(user3, user4);
+    }
 }
