@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Log4j2
 @Service
@@ -28,11 +29,11 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     public OrderDto createOrder(OrderDto orderDto){
-
         var user = this.userRepository.findByUsername(orderDto.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException("No user with username " + orderDto.getUsername() + ".")
         );
         var customer = this.customerRepository.findByUser_Email(orderDto.getEmail());
+        System.out.println("CUSTOMWE" +customer);
 
         var order = new Order(
                orderDto.getPaymentType(),
@@ -40,10 +41,12 @@ public class OrderServiceImp implements OrderService {
                customer,
                orderDto.getLocation()
         );
+        System.out.println("RDE  : "+ order);
 
-        this.orderRepository.saveAndFlush(order);
-        return Utils.parseOrderDto(order);
+        var ret=this.orderRepository.save(order);
+        System.out.println("ORDER "+ret);
+        return Utils.parseOrderDto(ret);
     }
 
-
 }
+

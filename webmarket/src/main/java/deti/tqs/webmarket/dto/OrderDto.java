@@ -1,7 +1,5 @@
 package deti.tqs.webmarket.dto;
 
-import deti.tqs.webmarket.model.Comment;
-import deti.tqs.webmarket.model.Order;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

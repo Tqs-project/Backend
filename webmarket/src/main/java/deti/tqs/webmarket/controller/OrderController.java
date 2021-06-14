@@ -22,11 +22,4 @@ public class OrderController {
         return new ResponseEntity<>(this.orderService.createOrder(orderDto),
                 HttpStatus.CREATED);
     }
-
-    /*@PutMapping()
-    public ResponseEntity<OrderDto> updateOrder(@RequestBody OrderDto orderDto) {
-        log.info(String.format("Updating order %s.", orderDto.getLocation()));
-        return new ResponseEntity<>(this.orderService.createOrder(orderDto),
-                HttpStatus.OK);
-    }*/
 }
