@@ -25,6 +25,9 @@ public class Order {
     @Column(columnDefinition = "Decimal(10, 2)")
     private Double cost;
 
+    @Column(columnDefinition = "VARCHAR(100)")
+    private String location;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
@@ -35,10 +38,11 @@ public class Order {
 
     public Order() {}
 
-    public Order(String paymentType, Double cost, Customer customer) {
+    public Order(String paymentType, Double cost, Customer customer, String location) {
         this.paymentType = paymentType;
         this.cost = cost;
         this.customer = customer;
+        this.location = location;
 
         this.orderTimestamp = new Timestamp(System.currentTimeMillis());
         this.status = "WAITING";

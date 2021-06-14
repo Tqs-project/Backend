@@ -1,6 +1,5 @@
 package deti.tqs.webmarket.service;
 
-import deti.tqs.webmarket.dto.CustomerDto;
 import deti.tqs.webmarket.dto.RiderDto;
 import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.dto.UserDto;
@@ -9,6 +8,9 @@ import deti.tqs.webmarket.repository.OrderRepository;
 import deti.tqs.webmarket.repository.RideRepository;
 import deti.tqs.webmarket.repository.RiderRepository;
 import deti.tqs.webmarket.repository.UserRepository;
+import deti.tqs.webmarket.model.Order;
+import deti.tqs.webmarket.model.Ride;
+import deti.tqs.webmarket.model.Rider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +22,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;

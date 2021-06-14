@@ -8,7 +8,6 @@ import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.dto.UserDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -118,7 +117,8 @@ class RiderController_RestTemplateIT {
         var order = new Order(
                 "PAYPAL",
                 20.0,
-                customer
+                customer,
+                "Rua da Macieira, 15, Anadia 1111-111"
         );
 
         var ride = new Ride(

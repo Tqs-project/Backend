@@ -2,6 +2,8 @@ package deti.tqs.webmarket.util;
 
 import deti.tqs.webmarket.dto.CustomerDto;
 import deti.tqs.webmarket.model.Customer;
+import deti.tqs.webmarket.dto.OrderDto;
+import deti.tqs.webmarket.model.Order;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.Timestamp;
@@ -47,6 +49,17 @@ public class Utils {
                 customer.getIban(),
                 comments,
                 orders
+        );
+    }
+
+    public static OrderDto parseOrderDto(Order order) {
+        return new OrderDto(
+                order.getId(),
+                order.getPaymentType(),
+                order.getCost(),
+                order.getCustomer().getUser().getUsername(),
+                order.getCustomer().getUser().getEmail(),
+                order.getLocation()
         );
     }
 }

@@ -38,7 +38,7 @@ public class CustomerController {
                 null
         );
         return new ResponseEntity<>(this.customerService.createCustomer(customer),
-                HttpStatus.CREATED);
+            HttpStatus.CREATED);
     }
 
     @PutMapping()
