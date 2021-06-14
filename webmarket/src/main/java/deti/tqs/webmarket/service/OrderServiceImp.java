@@ -17,8 +17,9 @@ import javax.transaction.Transactional;
 @Service
 @Transactional
 public class OrderServiceImp implements OrderService {
+
     @Autowired
-    OrderRepository orderRepository;
+    private OrderRepository orderRepository;
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -32,7 +33,8 @@ public class OrderServiceImp implements OrderService {
         var user = this.userRepository.findByUsername(orderDto.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException("No user with username " + orderDto.getUsername() + ".")
         );
-        var customer = this.customerRepository.findByUser_Email(orderDto.getEmail());
+
+        var customer = user.getCustomer();
 
         var order = new Order(
                orderDto.getPaymentType(),
@@ -40,9 +42,11 @@ public class OrderServiceImp implements OrderService {
                customer,
                orderDto.getLocation()
         );
+        customer.getOrders().add(order);
 
-        this.orderRepository.saveAndFlush(order);
-        return Utils.parseOrderDto(order);
+        var ret = this.orderRepository.save(order);
+        this.customerRepository.save(customer);
+        return Utils.parseOrderDto(ret);
     }
 
 
