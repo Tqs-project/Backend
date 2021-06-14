@@ -61,7 +61,7 @@ public class OrderServiceImp implements OrderService {
         return Utils.parseOrderDto(ret);
     }
 
-    private void assignOrderToRider(Order order) {
+    protected void assignOrderToRider(Order order) {
         // first we have to get all the riders available
         var ridersLogged = userRepository.getRidersLogged();
 
@@ -77,6 +77,7 @@ public class OrderServiceImp implements OrderService {
             if (!ordersCache.riderHasNewAssignments(user.getUsername())) {
                 ordersCache.assignOrder(user.getUsername(), order.getId());
                 assigned = true;
+                break;
             }
         }
 
