@@ -75,6 +75,7 @@ public class OrderServiceImp implements OrderService {
         for (User user : ridersAvailable) {
             if (!ordersCache.riderHasNewAssignments(user.getUsername())) {
                 ordersCache.assignOrder(user.getUsername(), order.getId());
+                log.info("Order with id " + order.getId() + " was assigned to " + user.getUsername());
                 assigned = true;
                 break;
             }

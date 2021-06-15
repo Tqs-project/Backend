@@ -1,11 +1,9 @@
 package deti.tqs.webmarket.controller;
 
-import deti.tqs.webmarket.dto.CustomerLoginDto;
+import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.model.*;
 import deti.tqs.webmarket.repository.*;
-import deti.tqs.webmarket.dto.RiderDto;
-import deti.tqs.webmarket.dto.TokenDto;
-import deti.tqs.webmarket.dto.UserDto;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,19 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.Assertions.*;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Log4j2
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application-integrationtest.properties")
 class RiderController_RestTemplateIT {
@@ -169,7 +164,6 @@ class RiderController_RestTemplateIT {
                 .containsOnly("DELIVERED");
     }
 
-    //@Disabled
     @Test
     void whenCreateRiderIsValid_thenCreateRider() {
         ResponseEntity<RiderDto> response = restTemplate.postForEntity(
@@ -186,7 +180,6 @@ class RiderController_RestTemplateIT {
         );
     }
 
-    //@Disabled
     @Test
     void whenRiderMakesLogin_thenTheTokenShouldBePersistedOnDB() {
         // TODO change to saveandflush
@@ -211,5 +204,134 @@ class RiderController_RestTemplateIT {
         // verify if the token attribute was added to the customer row
         List<User> found = userRepository.findAll();
         assertThat(found).extracting(User::getAuthToken).isNotNull();
+    }
+
+    @Test
+    void assignOrderToRiderTest() {
+        var user = new User(
+                "Albert",
+                "albert@gmail.com",
+                "RIDER",
+                "password",
+                "935666122"
+        );
+
+        var client = new User(
+                "Not Albert",
+                "notalbert@gmail.com",
+                "CUSTOMER",
+                "password",
+                "935666125"
+        );
+
+        var riderConcrete = new Rider(
+                user,
+                "aa-22-bb"
+        );
+        user.setRider(riderConcrete);
+
+        var customer = new Customer(
+                client,
+                "right there",
+                "dont even know",
+                "Barber shop i think",
+                "not important"
+        );
+        client.setCustomer(customer);
+
+        // create customer
+        restTemplate.postForEntity(
+                "/api/customer",
+                new CustomerCreateDto(
+                        client.getUsername(),
+                        client.getEmail(),
+                        client.getPassword(),
+                        client.getPhoneNumber(),
+                        customer.getAddress(),
+                        customer.getDescription(),
+                        customer.getImageUrl(),
+                        customer.getTypeOfService(),
+                        customer.getIban()
+                ),
+                CustomerDto.class
+        );
+        // create rider
+        restTemplate.postForEntity(
+                "/api/riders",
+                new RiderDto(
+                    new UserDto(
+                            user.getUsername(),
+                            user.getEmail(),
+                            "",
+                            user.getPassword(),
+                            user.getPhoneNumber()
+                    ),
+                        riderConcrete.getVehiclePlate()
+                ),
+                RiderDto.class
+        );
+
+        // make the rider login
+        var login = new CustomerLoginDto(
+                riderConcrete.getUser().getUsername(),
+                riderConcrete.getUser().getEmail(),
+                riderConcrete.getUser().getPassword()
+        );
+
+        var responseToken = restTemplate.postForEntity(
+                "/api/riders/login", login, TokenDto.class
+        );
+
+        // create a order
+
+        var headers = new HttpHeaders();
+//        headers.set("username", riderConcrete.getUser().getUsername());
+//        headers.set("idToken", responseToken.getBody().getToken());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        var response = restTemplate.postForEntity(
+                "/api/order",
+                new HttpEntity<>(new OrderCreateDto(
+                        client.getUsername(),
+                        "PAYPAL",
+                        2.0,
+                        "heaven"
+                ), headers),
+                OrderDto.class
+        );
+
+        assertThat(
+                response.getBody()
+        ).extracting(OrderDto::getPaymentType).isEqualTo(
+                "PAYPAL"
+        );
+
+        assertThat(
+                response.getBody()
+        ).extracting(OrderDto::getStatus)
+                .isEqualTo("WAITING");
+
+        assertThat(
+                response.getBody()
+        ).extracting(OrderDto::getId).isNotNull();
+
+        // check if the order was assigned to the rider
+
+        var riderHeaders = new HttpHeaders();
+        riderHeaders.set("username", riderConcrete.getUser().getUsername());
+        riderHeaders.set("idToken", responseToken.getBody().getToken());
+        riderHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        var riderResponse = restTemplate.exchange(
+                "/api/riders/order",
+                HttpMethod.GET,
+                new HttpEntity<>(riderHeaders),
+                OrderDto.class
+        );
+
+        assertThat(
+                riderResponse.getBody()
+        ).extracting(OrderDto::getPaymentType)
+                .isEqualTo("PAYPAL");
     }
 }

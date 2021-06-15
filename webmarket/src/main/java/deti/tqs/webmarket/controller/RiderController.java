@@ -1,10 +1,7 @@
 package deti.tqs.webmarket.controller;
 
-import deti.tqs.webmarket.dto.CustomerLoginDto;
-import deti.tqs.webmarket.dto.UserDto;
+import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.repository.UserRepository;
-import deti.tqs.webmarket.dto.RiderDto;
-import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.model.Rider;
 import deti.tqs.webmarket.service.RiderServiceImp;
 import lombok.extern.log4j.Log4j2;
@@ -76,6 +73,26 @@ public class RiderController {
             return new ResponseEntity<>("No ride with id: " + id, HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>("Ride updated with success", HttpStatus.OK);
+    }
+
+    @GetMapping("/order")
+    public ResponseEntity<OrderDto> getOrderAssigned(@RequestHeader String idToken,
+                                     @RequestHeader String username) {
+
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>(new OrderDto(), HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>(new OrderDto(), HttpStatus.UNAUTHORIZED);
+
+        if (!riderService.riderHasNewAssignment(username))
+            return new ResponseEntity<>(new OrderDto(), HttpStatus.OK);
+
+        return new ResponseEntity<>(
+                riderService.retrieveOrderAssigned(username),
+                HttpStatus.OK
+        );
     }
 
 }

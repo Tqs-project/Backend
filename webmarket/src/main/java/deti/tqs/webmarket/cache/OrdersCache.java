@@ -29,6 +29,10 @@ public class OrdersCache {
         this.ordersCache.put(usernameRider, orderId);
     }
 
+    public Long retrieveAssignedOrder(String username) {
+        return this.ordersCache.get(username);
+    }
+
     public void removeOrderAssignment(String usernameRider) {
         this.ordersCache.remove(usernameRider);
     }

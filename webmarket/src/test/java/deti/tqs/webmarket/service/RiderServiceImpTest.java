@@ -1,5 +1,7 @@
 package deti.tqs.webmarket.service;
 
+import deti.tqs.webmarket.cache.OrdersCache;
+import deti.tqs.webmarket.dto.OrderDto;
 import deti.tqs.webmarket.dto.RiderDto;
 import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.dto.UserDto;
@@ -40,6 +42,9 @@ class RiderServiceImpTest {
 
     @Mock(lenient = true)
     private UserRepository userRepository;
+
+    @Mock
+    private OrdersCache ordersCache;
 
     @Mock
     private PasswordEncoder encoder;
@@ -265,5 +270,65 @@ class RiderServiceImpTest {
         Mockito.verify(encoder, Mockito.times(1)).matches(
                 riderCreateDto.getUser().getPassword(), correctPassword + "-encoded"
         );
+    }
+
+    @Test
+    void riderHasNewAssignmentTest() {
+        var rider = "rider1";
+        Mockito.when(ordersCache.riderHasNewAssignments(rider)).thenReturn(
+                false
+        );
+
+        assertThat(riderService.riderHasNewAssignment(rider))
+                .isFalse();
+    }
+
+    @Test
+    void retrieveOrderAssignedTest() {
+        var customer = new Customer(
+                userWithId,
+                "hell",
+                "a very, but very good restaurant",
+                "restaurant",
+                "asdfasdasd"
+        );
+        var order = new Order(
+            "MB",
+                20.0,
+                customer,
+                customer.getAddress()
+        );
+        order.setId(222L);
+        order.setStatus("WAITING");
+
+        var orderDtoAssignOrder = new OrderDto(
+                order.getId(),
+                order.getOrderTimestamp(),
+                order.getPaymentType(),
+                order.getStatus(),
+                order.getCost(),
+                order.getLocation(),
+                order.getCustomer().getId(),
+                order.getCustomer().getUser().getUsername(),
+                null
+        );
+
+        var rider = "Torres";
+
+        Mockito.when(ordersCache.retrieveAssignedOrder(rider))
+                .thenReturn(order.getId());
+
+        Mockito.when(orderRepository.findById(order.getId()))
+                .thenReturn(Optional.of(order));
+
+        assertThat(
+                riderService.retrieveOrderAssigned(rider)
+        ).isEqualTo(orderDtoAssignOrder);
+
+        Mockito.verify(ordersCache, Mockito.times(1))
+                .retrieveAssignedOrder(rider);
+
+        Mockito.verify(orderRepository, Mockito.times(1))
+                .findById(order.getId());
     }
 }

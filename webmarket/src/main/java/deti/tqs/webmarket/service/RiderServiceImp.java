@@ -1,5 +1,7 @@
 package deti.tqs.webmarket.service;
 
+import deti.tqs.webmarket.cache.OrdersCache;
+import deti.tqs.webmarket.dto.OrderDto;
 import deti.tqs.webmarket.dto.UserDto;
 import deti.tqs.webmarket.repository.OrderRepository;
 import deti.tqs.webmarket.repository.RideRepository;
@@ -9,11 +11,13 @@ import deti.tqs.webmarket.model.Rider;
 import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.repository.RiderRepository;
 import deti.tqs.webmarket.repository.UserRepository;
+import deti.tqs.webmarket.util.Utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.security.SecureRandom;
 import java.util.List;
@@ -35,6 +39,9 @@ public class RiderServiceImp implements RiderService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrdersCache ordersCache;
 
     @Autowired
     private PasswordEncoder encoder;
@@ -131,6 +138,20 @@ public class RiderServiceImp implements RiderService {
 
     public List<Rider> getAllRiders() {
         return repository.findAll();
+    }
+
+    public boolean riderHasNewAssignment(String username) {
+        return ordersCache.riderHasNewAssignments(username);
+    }
+
+    public OrderDto retrieveOrderAssigned(String username) {
+        var orderId = ordersCache.retrieveAssignedOrder(username);
+
+        var order = orderRepository.findById(orderId).orElseThrow(
+                () -> new EntityNotFoundException("Order with id " + orderId + " doesn't exist.")
+        );
+
+        return Utils.parseOrderDto(order);
     }
 
 }

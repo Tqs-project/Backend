@@ -17,12 +17,13 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    // TODO put authentication here
     @PostMapping()
     public ResponseEntity<OrderDto> createOrder(@RequestBody OrderCreateDto orderDto) {
         log.info("Saving order " + orderDto.getLocation() + ".");
         var order = new OrderDto();
         order.setUsername(orderDto.getUsername());
-        order.setPaymentType(order.getPaymentType());
+        order.setPaymentType(orderDto.getPaymentType());
         order.setCost(orderDto.getCost());
         order.setLocation(orderDto.getLocation());
         return new ResponseEntity<>(this.orderService.createOrder(order),

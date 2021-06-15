@@ -1,5 +1,6 @@
 package deti.tqs.webmarket.controller;
 
+import com.google.common.base.CharMatcher;
 import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.repository.UserRepository;
@@ -8,6 +9,7 @@ import deti.tqs.webmarket.service.RiderServiceImp;
 import deti.tqs.webmarket.util.JsonUtil;
 import lombok.extern.log4j.Log4j2;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MissingRequestHeaderException;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -274,4 +277,122 @@ class RiderControllerTest_WithMockServiceIT {
 
         Mockito.verify(riderService, Mockito.times(1)).login(riderForServiceClass);
     }
+
+    @Test
+    void whenOnGetOrderAssignedTheRiderProvidesBadUsername_thenReturnEmptyOrderDto() throws Exception {
+        var username = "i dont exist";
+        Mockito.when(userRepository.findByUsername(username))
+                .thenReturn(Optional.empty());
+
+        mvc.perform(
+                get("/api/riders/order")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("username", username)
+                .header("idToken", "verysecrettoken")
+        ).andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.id").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.status").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.cost").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.customer_id").value(IsNull.nullValue()));
+    }
+
+    @Test
+    void whenOnGetOrderAssignedTheRiderDoesntHaveLoginToken_thenReturnEmptyOrderDto() throws Exception {
+        var username = "i dont exist";
+        var token = "i dont exist also";
+        var user = new User();
+        user.setAuthToken("i do exist");
+        Mockito.when(userRepository.findByUsername(username))
+                .thenReturn(Optional.of(user));
+
+        mvc.perform(
+                get("/api/riders/order")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("username", username)
+                        .header("idToken", "verysecrettoken")
+        ).andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.id").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.status").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.cost").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.customer_id").value(IsNull.nullValue()));
+    }
+
+    @Test
+    void whenTheRiderDoesNotHaveAnyNewAssignment_thenReturnEmptyOrderDto() throws Exception {
+        var username = "i dont exist";
+        var token = "i do exist";
+        var user = new User();
+        user.setAuthToken(token);
+
+        Mockito.when(userRepository.findByUsername(username))
+                .thenReturn(Optional.of(user));
+
+        Mockito.when(riderService.riderHasNewAssignment(username))
+                .thenReturn(false);
+
+        mvc.perform(
+                get("/api/riders/order")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("username", username)
+                        .header("idToken", token)
+        ).andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.status").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.cost").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.customer_id").value(IsNull.nullValue()));
+
+        Mockito.verify(riderService, Mockito.times(1))
+                .riderHasNewAssignment(username);
+
+        Mockito.verify(riderService, Mockito.times(0))
+                .retrieveOrderAssigned(username);
+    }
+
+    @Test
+    void whenEverythingIsOk_thenReturnOrderDto() throws Exception {
+        var username = "i dont exist";
+        var token = "i do exist";
+        var user = new User();
+        user.setAuthToken(token);
+
+        Mockito.when(userRepository.findByUsername(username))
+                .thenReturn(Optional.of(user));
+
+        Mockito.when(riderService.riderHasNewAssignment(username))
+                .thenReturn(true);
+
+        var orderDtoAssignOrder = new OrderDto(
+                1L,
+                new Timestamp(System.currentTimeMillis()),
+                "PAYPAL",
+                "WAITING",
+                5.0,
+                "heaven",
+                12L,
+                "Mercadona",
+                null
+        );
+
+        Mockito.when(riderService.retrieveOrderAssigned(
+                username
+        )).thenReturn(orderDtoAssignOrder);
+
+        mvc.perform(
+                get("/api/riders/order")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("username", username)
+                        .header("idToken", token)
+        ).andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.status", CoreMatchers.is(orderDtoAssignOrder.getStatus())))
+                .andExpect(jsonPath("$.cost", CoreMatchers.is(orderDtoAssignOrder.getCost())))
+                .andExpect(jsonPath("$.customer_id").isNumber());
+
+        Mockito.verify(riderService, Mockito.times(1))
+                .riderHasNewAssignment(username);
+
+        Mockito.verify(riderService, Mockito.times(1))
+                .retrieveOrderAssigned(username);
+    }
+
 }
