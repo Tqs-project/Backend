@@ -183,7 +183,6 @@ public class RiderServiceImp implements RiderService {
 
     @Override
     public void riderAcceptsAssignment(String username) {
-
         // first, check if the rider was assigned with some order
         if (!ordersCache.riderHasNewAssignments(username))
             return;
@@ -201,14 +200,19 @@ public class RiderServiceImp implements RiderService {
         );
 
         var rider = user.getRider();
+        rider.setBusy(true);
+
+        // update the order status
+        order.setStatus("DELIVERING");
 
         var ride = new Ride(order, order.getLocation());
         ride.setRider(rider);
         order.setRide(ride);
 
         // save all the stuff to the db
-        repository.saveAndFlush(rider);
+        rideRepository.saveAndFlush(ride);
         orderRepository.saveAndFlush(order);
+        repository.saveAndFlush(rider);
     }
 
     @Override

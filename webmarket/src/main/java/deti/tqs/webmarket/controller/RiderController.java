@@ -106,6 +106,7 @@ public class RiderController {
             return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
 
         this.riderService.riderAcceptsAssignment(username);
+        log.info("Rider with username {" + username + "} accepted the order assigned to him.");
         return new ResponseEntity<>("Have a nice ride", HttpStatus.OK);
     }
 
@@ -120,6 +121,7 @@ public class RiderController {
             return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
 
         this.riderService.riderDeclinesAssignment(username);
+        log.info("Rider with username {" + username + "} does not accepted the order assigned to him.");
         return new ResponseEntity<>("No problem at all", HttpStatus.OK);
     }
 

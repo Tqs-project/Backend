@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 @Component
@@ -47,5 +48,10 @@ public class OrdersCache {
 
     public boolean queueHasOrders() {
         return !this.waitingOrdersQueue.isEmpty();
+    }
+
+    public void showMap() {
+        for (Map.Entry<String, Long> entry : ordersCache.entrySet())
+            System.out.println(entry.getKey() + " ----------> " + entry.getValue());
     }
 }
