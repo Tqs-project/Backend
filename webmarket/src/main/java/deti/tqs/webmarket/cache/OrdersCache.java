@@ -50,6 +50,11 @@ public class OrdersCache {
         return !this.waitingOrdersQueue.isEmpty();
     }
 
+    public void deleteAllOrders() {
+        this.ordersCache.clear();
+        this.waitingOrdersQueue.clear();
+    }
+
     public void showMap() {
         for (Map.Entry<String, Long> entry : ordersCache.entrySet())
             System.out.println(entry.getKey() + " ----------> " + entry.getValue());

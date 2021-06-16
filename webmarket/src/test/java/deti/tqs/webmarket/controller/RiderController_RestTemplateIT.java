@@ -1,5 +1,6 @@
 package deti.tqs.webmarket.controller;
 
+import deti.tqs.webmarket.cache.OrdersCache;
 import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.model.*;
 import deti.tqs.webmarket.repository.*;
@@ -44,6 +45,9 @@ class RiderController_RestTemplateIT {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @Autowired
+    private OrdersCache ordersCache;
+
     private Order orderFromDB;
     private Rider riderConcrete;
     private RiderDto rider;
@@ -69,6 +73,7 @@ class RiderController_RestTemplateIT {
         riderRepository.deleteAll();
         customerRepository.deleteAll();
         userRepository.deleteAll();
+        ordersCache.deleteAllOrders();
     }
 
     @Test
