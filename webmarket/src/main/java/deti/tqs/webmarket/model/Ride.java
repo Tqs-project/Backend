@@ -38,5 +38,7 @@ public class Ride {
     public Ride(Order order, String destination) {
         this.order = order;
         this.destination = destination;
+
+        this.timestampInit = new Timestamp(System.currentTimeMillis());
     }
 }

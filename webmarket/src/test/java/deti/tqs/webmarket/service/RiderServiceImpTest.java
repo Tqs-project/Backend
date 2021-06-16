@@ -1,6 +1,7 @@
 package deti.tqs.webmarket.service;
 
-import deti.tqs.webmarket.dto.CustomerDto;
+import deti.tqs.webmarket.cache.OrdersCache;
+import deti.tqs.webmarket.dto.OrderDto;
 import deti.tqs.webmarket.dto.RiderDto;
 import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.dto.UserDto;
@@ -9,6 +10,9 @@ import deti.tqs.webmarket.repository.OrderRepository;
 import deti.tqs.webmarket.repository.RideRepository;
 import deti.tqs.webmarket.repository.RiderRepository;
 import deti.tqs.webmarket.repository.UserRepository;
+import deti.tqs.webmarket.model.Order;
+import deti.tqs.webmarket.model.Ride;
+import deti.tqs.webmarket.model.Rider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +24,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -40,6 +42,9 @@ class RiderServiceImpTest {
 
     @Mock(lenient = true)
     private UserRepository userRepository;
+
+    @Mock
+    private OrdersCache ordersCache;
 
     @Mock
     private PasswordEncoder encoder;
@@ -63,8 +68,11 @@ class RiderServiceImpTest {
 
     @BeforeEach
     void setUp() {
+        var userForQueue = new User();
+        userForQueue.setUsername("Very beautiful name");
         riderRepo = new Rider();
         riderRepo.setBusy(true);
+        riderRepo.setUser(userForQueue);
 
         orderRepo = new Order();
         orderRepo.setId(1L);
@@ -147,10 +155,13 @@ class RiderServiceImpTest {
     }
 
     @Test
-    void updateOrderStatusWithoutErrorsTest() {
+    void updateOrderStatusWithoutErrorsAndNoOrdersOnQueueTest() {
         Mockito.when(rideRepository.findById(rideRepo.getId())).thenReturn(
                 Optional.of(rideRepo)
         );
+
+        Mockito.when(ordersCache.queueHasOrders())
+                .thenReturn(false);
 
         assertThat(
                 riderService.updateOrderDelivered(rideRepo.getId())
@@ -159,6 +170,40 @@ class RiderServiceImpTest {
         assertThat(riderRepo.getBusy()).isFalse();
 
         assertThat(orderRepo.getStatus()).isEqualTo("DELIVERED");
+
+        Mockito.verify(ordersCache, Mockito.times(1))
+                .queueHasOrders();
+
+        Mockito.verify(ordersCache, Mockito.times(0))
+                .assignOrder(ArgumentMatchers.anyString(), ArgumentMatchers.anyLong());
+    }
+
+    @Test
+    void updateOrderStatusWithoutErrorsAndOrdersOnQueueTest() {
+
+        Mockito.when(rideRepository.findById(rideRepo.getId())).thenReturn(
+                Optional.of(rideRepo)
+        );
+
+        Mockito.when(ordersCache.queueHasOrders())
+                .thenReturn(true);
+
+        Mockito.when(ordersCache.getOrderFromQueue())
+                .thenReturn(200L);
+
+        assertThat(
+                riderService.updateOrderDelivered(rideRepo.getId())
+        ).isTrue();
+
+        assertThat(riderRepo.getBusy()).isFalse();
+
+        assertThat(orderRepo.getStatus()).isEqualTo("DELIVERED");
+
+        Mockito.verify(ordersCache, Mockito.times(1))
+                .queueHasOrders();
+
+        Mockito.verify(ordersCache, Mockito.times(1))
+                .assignOrder(riderRepo.getUser().getUsername(), 200L);
     }
 
     @Test
@@ -266,4 +311,66 @@ class RiderServiceImpTest {
                 riderCreateDto.getUser().getPassword(), correctPassword + "-encoded"
         );
     }
+
+    @Test
+    void riderHasNewAssignmentTest() {
+        var rider = "rider1";
+        Mockito.when(ordersCache.riderHasNewAssignments(rider)).thenReturn(
+                false
+        );
+
+        assertThat(riderService.riderHasNewAssignment(rider))
+                .isFalse();
+    }
+
+    @Test
+    void retrieveOrderAssignedTest() {
+        var customer = new Customer(
+                userWithId,
+                "hell",
+                "a very, but very good restaurant",
+                "restaurant",
+                "asdfasdasd"
+        );
+        var order = new Order(
+            "MB",
+                20.0,
+                customer,
+                customer.getAddress()
+        );
+        order.setId(222L);
+        order.setStatus("WAITING");
+
+        var orderDtoAssignOrder = new OrderDto(
+                order.getId(),
+                order.getOrderTimestamp(),
+                order.getPaymentType(),
+                order.getStatus(),
+                order.getCost(),
+                order.getLocation(),
+                order.getCustomer().getId(),
+                order.getCustomer().getUser().getUsername(),
+                null
+        );
+
+        var rider = "Torres";
+
+        Mockito.when(ordersCache.retrieveAssignedOrder(rider))
+                .thenReturn(order.getId());
+
+        Mockito.when(orderRepository.findById(order.getId()))
+                .thenReturn(Optional.of(order));
+
+        assertThat(
+                riderService.retrieveOrderAssigned(rider)
+        ).isEqualTo(orderDtoAssignOrder);
+
+        Mockito.verify(ordersCache, Mockito.times(1))
+                .retrieveAssignedOrder(rider);
+
+        Mockito.verify(orderRepository, Mockito.times(1))
+                .findById(order.getId());
+    }
+
+
 }

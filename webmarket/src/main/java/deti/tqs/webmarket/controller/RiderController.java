@@ -1,10 +1,7 @@
 package deti.tqs.webmarket.controller;
 
-import deti.tqs.webmarket.dto.CustomerLoginDto;
-import deti.tqs.webmarket.dto.UserDto;
+import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.repository.UserRepository;
-import deti.tqs.webmarket.dto.RiderDto;
-import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.model.Rider;
 import deti.tqs.webmarket.service.RiderServiceImp;
 import lombok.extern.log4j.Log4j2;
@@ -75,7 +72,59 @@ public class RiderController {
         if (!riderService.updateOrderDelivered(id))
             return new ResponseEntity<>("No ride with id: " + id, HttpStatus.NOT_FOUND);
 
+        log.info("The order with id " + id + " was delivered by " + username);
+
         return new ResponseEntity<>("Ride updated with success", HttpStatus.OK);
+    }
+
+    @GetMapping("/order")
+    public ResponseEntity<OrderDto> getOrderAssigned(@RequestHeader String idToken,
+                                     @RequestHeader String username) {
+
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>(new OrderDto(), HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>(new OrderDto(), HttpStatus.UNAUTHORIZED);
+
+        if (!riderService.riderHasNewAssignment(username))
+            return new ResponseEntity<>(new OrderDto(), HttpStatus.OK);
+
+        return new ResponseEntity<>(
+                riderService.retrieveOrderAssigned(username),
+                HttpStatus.OK
+        );
+    }
+
+    @PostMapping("/order/accept")
+    public ResponseEntity<String> riderAcceptsTheOrderAssignedToHim(@RequestHeader String idToken,
+                                                                    @RequestHeader String username) {
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+
+        this.riderService.riderAcceptsAssignment(username);
+        log.info("Rider with username {" + username + "} accepted the order assigned to him.");
+        return new ResponseEntity<>("Have a nice ride", HttpStatus.OK);
+    }
+
+    @PostMapping("/order/decline")
+    public ResponseEntity<String> riderDeclinesTheOrderAssignedToHim(@RequestHeader String idToken,
+                                                                     @RequestHeader String username) {
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+
+        this.riderService.riderDeclinesAssignment(username);
+        log.info("Rider with username {" + username + "} does not accepted the order assigned to him.");
+        return new ResponseEntity<>("No problem at all", HttpStatus.OK);
     }
 
 }

@@ -64,7 +64,7 @@ public class Customer {
                 comment -> comment.getId().toString()
         ).reduce("[", (partialString, identifier) -> partialString + ", " + identifier) + "]" +
                 ", orders=" + orders.stream().map(
-                comment -> comment.getId().toString()
+                order -> order.getId().toString()
         ).reduce("[", (partialString, identifier) -> partialString + ", " + identifier) + "]" +
                 '}';
     }

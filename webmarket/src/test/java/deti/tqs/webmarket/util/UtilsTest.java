@@ -2,10 +2,12 @@ package deti.tqs.webmarket.util;
 
 import deti.tqs.webmarket.model.Comment;
 import deti.tqs.webmarket.model.Customer;
+import deti.tqs.webmarket.model.Order;
 import deti.tqs.webmarket.model.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -72,5 +74,30 @@ class UtilsTest {
         Assertions.assertThat(
                 parsing
         ).extracting("comments").isEqualTo(Arrays.asList(10L, 11L));
+    }
+
+    @Test
+    void parseOrderDto() {
+        var order = new Order(
+                "Raining Cash",
+                30.0,
+                null,
+                "In a galaxy far away"
+        );
+        order.setId(1L);
+
+        var parsing = Utils.parseOrderDto(order);
+
+        Assertions.assertThat(
+                parsing
+        ).extracting("id").isEqualTo(1L);
+
+        Assertions.assertThat(
+                parsing
+        ).extracting("customerId").isNull();
+
+        Assertions.assertThat(
+                parsing
+        ).extracting("username").isNull();
     }
 }
