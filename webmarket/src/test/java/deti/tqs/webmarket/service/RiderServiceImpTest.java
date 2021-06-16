@@ -68,8 +68,11 @@ class RiderServiceImpTest {
 
     @BeforeEach
     void setUp() {
+        var userForQueue = new User();
+        userForQueue.setUsername("Very beautiful name");
         riderRepo = new Rider();
         riderRepo.setBusy(true);
+        riderRepo.setUser(userForQueue);
 
         orderRepo = new Order();
         orderRepo.setId(1L);
@@ -152,10 +155,13 @@ class RiderServiceImpTest {
     }
 
     @Test
-    void updateOrderStatusWithoutErrorsTest() {
+    void updateOrderStatusWithoutErrorsAndNoOrdersOnQueueTest() {
         Mockito.when(rideRepository.findById(rideRepo.getId())).thenReturn(
                 Optional.of(rideRepo)
         );
+
+        Mockito.when(ordersCache.queueHasOrders())
+                .thenReturn(false);
 
         assertThat(
                 riderService.updateOrderDelivered(rideRepo.getId())
@@ -164,6 +170,40 @@ class RiderServiceImpTest {
         assertThat(riderRepo.getBusy()).isFalse();
 
         assertThat(orderRepo.getStatus()).isEqualTo("DELIVERED");
+
+        Mockito.verify(ordersCache, Mockito.times(1))
+                .queueHasOrders();
+
+        Mockito.verify(ordersCache, Mockito.times(0))
+                .assignOrder(ArgumentMatchers.anyString(), ArgumentMatchers.anyLong());
+    }
+
+    @Test
+    void updateOrderStatusWithoutErrorsAndOrdersOnQueueTest() {
+
+        Mockito.when(rideRepository.findById(rideRepo.getId())).thenReturn(
+                Optional.of(rideRepo)
+        );
+
+        Mockito.when(ordersCache.queueHasOrders())
+                .thenReturn(true);
+
+        Mockito.when(ordersCache.getOrderFromQueue())
+                .thenReturn(200L);
+
+        assertThat(
+                riderService.updateOrderDelivered(rideRepo.getId())
+        ).isTrue();
+
+        assertThat(riderRepo.getBusy()).isFalse();
+
+        assertThat(orderRepo.getStatus()).isEqualTo("DELIVERED");
+
+        Mockito.verify(ordersCache, Mockito.times(1))
+                .queueHasOrders();
+
+        Mockito.verify(ordersCache, Mockito.times(1))
+                .assignOrder(riderRepo.getUser().getUsername(), 200L);
     }
 
     @Test
