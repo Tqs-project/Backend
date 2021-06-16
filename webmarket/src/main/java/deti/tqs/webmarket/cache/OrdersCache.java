@@ -44,4 +44,8 @@ public class OrdersCache {
     public void addOrderToQueue(Long orderId) { this.waitingOrdersQueue.add(orderId); }
 
     public Long getOrderFromQueue() { return this.waitingOrdersQueue.remove(); }
+
+    public boolean queueHasOrders() {
+        return !this.waitingOrdersQueue.isEmpty();
+    }
 }

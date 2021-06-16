@@ -129,6 +129,18 @@ public class RiderServiceImp implements RiderService {
         orderRepository.saveAndFlush(order);
         rideRepository.saveAndFlush(ride);
         repository.saveAndFlush(rider);
+
+        /**
+         * now this rider is not busy
+         * so he can grab one of the orders on the queue
+         */
+        if (!ordersCache.queueHasOrders())
+            return true;
+
+        // it means that the queue has orders
+        // we can just assign the first order stored to the rider
+        ordersCache.assignOrder(rider.getUser().getUsername(),
+                ordersCache.getOrderFromQueue());
         return true;
     }
 

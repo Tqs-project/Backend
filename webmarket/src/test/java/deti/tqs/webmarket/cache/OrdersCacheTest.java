@@ -42,4 +42,17 @@ class OrdersCacheTest {
                 cache.getOrderFromQueue()
         ).isEqualTo(1L);
     }
+
+    @Test
+    void emptyQueueTest() {
+        assertThat(
+                cache.queueHasOrders()
+        ).isFalse();
+
+        cache.addOrderToQueue(1L);
+
+        assertThat(
+                cache.queueHasOrders()
+        ).isTrue();
+    }
 }

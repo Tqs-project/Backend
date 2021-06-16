@@ -14,8 +14,6 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.assertj.core.api.Assertions.*;
-
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -182,7 +180,6 @@ class RiderController_RestTemplateIT {
 
     @Test
     void whenRiderMakesLogin_thenTheTokenShouldBePersistedOnDB() {
-        // TODO change to saveandflush
         ResponseEntity<RiderDto> response = restTemplate.postForEntity(
                 "/api/riders", rider, RiderDto.class
         );
@@ -333,5 +330,16 @@ class RiderController_RestTemplateIT {
                 riderResponse.getBody()
         ).extracting(OrderDto::getPaymentType)
                 .isEqualTo("PAYPAL");
+
+        assertThat(
+                riderResponse.getBody()
+        ).extracting(OrderDto::getStatus)
+                .isEqualTo("WAITING");
+
+        assertThat(
+                riderResponse.getBody()
+        ).extracting(OrderDto::getUsername)
+                .isEqualTo(client.getUsername());
+
     }
 }
