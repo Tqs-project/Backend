@@ -371,4 +371,6 @@ class RiderServiceImpTest {
         Mockito.verify(orderRepository, Mockito.times(1))
                 .findById(order.getId());
     }
+
+
 }

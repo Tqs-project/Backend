@@ -95,4 +95,32 @@ public class RiderController {
         );
     }
 
+    @PostMapping("/order/accept")
+    public ResponseEntity<String> riderAcceptsTheOrderAssignedToHim(@RequestHeader String idToken,
+                                                                    @RequestHeader String username) {
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+
+        this.riderService.riderAcceptsAssignment(username);
+        return new ResponseEntity<>("Have a nice ride", HttpStatus.OK);
+    }
+
+    @PostMapping("/order/decline")
+    public ResponseEntity<String> riderDeclinesTheOrderAssignedToHim(@RequestHeader String idToken,
+                                                                     @RequestHeader String username) {
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+
+        this.riderService.riderDeclinesAssignment(username);
+        return new ResponseEntity<>("No problem at all", HttpStatus.OK);
+    }
+
 }

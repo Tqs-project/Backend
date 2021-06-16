@@ -279,11 +279,22 @@ class RiderController_RestTemplateIT {
                 "/api/riders/login", login, TokenDto.class
         );
 
+        // make customer login
+        var customerLogin = new CustomerLoginDto(
+                client.getUsername(),
+                null,
+                client.getPassword()
+        );
+
+        var customerLoginToken = restTemplate.postForEntity(
+                "/api/customer/signin", customerLogin, TokenDto.class
+        );
+
         // create a order
 
         var headers = new HttpHeaders();
-//        headers.set("username", riderConcrete.getUser().getUsername());
-//        headers.set("idToken", responseToken.getBody().getToken());
+        headers.set("username", client.getUsername());
+        headers.set("idToken", customerLoginToken.getBody().getToken());
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         var response = restTemplate.postForEntity(
@@ -340,6 +351,11 @@ class RiderController_RestTemplateIT {
                 riderResponse.getBody()
         ).extracting(OrderDto::getUsername)
                 .isEqualTo(client.getUsername());
+
+    }
+
+    @Test
+    void riderAcceptsAssignedOrderTest() {
 
     }
 }

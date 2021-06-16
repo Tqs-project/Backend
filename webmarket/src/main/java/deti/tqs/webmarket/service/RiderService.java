@@ -13,4 +13,7 @@ public interface RiderService {
 
     boolean riderHasNewAssignment(String username);
     OrderDto retrieveOrderAssigned(String username);
+
+    void riderAcceptsAssignment(String username);
+    void riderDeclinesAssignment(String username);
 }
