@@ -293,7 +293,7 @@ class RiderControllerTest_WithMockServiceIT {
                 .andExpect(jsonPath("$.id").value(IsNull.nullValue()))
                 .andExpect(jsonPath("$.status").value(IsNull.nullValue()))
                 .andExpect(jsonPath("$.cost").value(IsNull.nullValue()))
-                .andExpect(jsonPath("$.customer_id").value(IsNull.nullValue()));
+                .andExpect(jsonPath("$.customerId").value(IsNull.nullValue()));
     }
 
     @Test
@@ -314,7 +314,7 @@ class RiderControllerTest_WithMockServiceIT {
                 .andExpect(jsonPath("$.id").value(IsNull.nullValue()))
                 .andExpect(jsonPath("$.status").value(IsNull.nullValue()))
                 .andExpect(jsonPath("$.cost").value(IsNull.nullValue()))
-                .andExpect(jsonPath("$.customer_id").value(IsNull.nullValue()));
+                .andExpect(jsonPath("$.customerId").value(IsNull.nullValue()));
     }
 
     @Test
@@ -339,7 +339,7 @@ class RiderControllerTest_WithMockServiceIT {
                 .andExpect(jsonPath("$.id").value(IsNull.nullValue()))
                 .andExpect(jsonPath("$.status").value(IsNull.nullValue()))
                 .andExpect(jsonPath("$.cost").value(IsNull.nullValue()))
-                .andExpect(jsonPath("$.customer_id").value(IsNull.nullValue()));
+                .andExpect(jsonPath("$.customerId").value(IsNull.nullValue()));
 
         Mockito.verify(riderService, Mockito.times(1))
                 .riderHasNewAssignment(username);
@@ -386,7 +386,7 @@ class RiderControllerTest_WithMockServiceIT {
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.status", CoreMatchers.is(orderDtoAssignOrder.getStatus())))
                 .andExpect(jsonPath("$.cost", CoreMatchers.is(orderDtoAssignOrder.getCost())))
-                .andExpect(jsonPath("$.customer_id").isNumber());
+                .andExpect(jsonPath("$.customerId").isNumber());
 
         Mockito.verify(riderService, Mockito.times(1))
                 .riderHasNewAssignment(username);

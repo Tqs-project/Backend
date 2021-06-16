@@ -94,7 +94,7 @@ class UtilsTest {
 
         Assertions.assertThat(
                 parsing
-        ).extracting("customer_id").isNull();
+        ).extracting("customerId").isNull();
 
         Assertions.assertThat(
                 parsing
