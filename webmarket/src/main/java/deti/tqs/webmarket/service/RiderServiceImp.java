@@ -244,7 +244,7 @@ public class RiderServiceImp implements RiderService {
 
         // next we have to filter does that are currently not busy or are different from the last rider
         var ridersAvailable = ridersLogged.stream().filter((
-                user -> user.getRider().getBusy() == false || !user.getUsername().equals(username)
+                user -> user.getRider().getBusy() == false && !user.getUsername().equals(username)
         )).collect(Collectors.toList());
 
         // and finally, we can pre-assign one rider to the order

@@ -72,6 +72,8 @@ public class RiderController {
         if (!riderService.updateOrderDelivered(id))
             return new ResponseEntity<>("No ride with id: " + id, HttpStatus.NOT_FOUND);
 
+        log.info("The order with id " + id + " was delivered by " + username);
+
         return new ResponseEntity<>("Ride updated with success", HttpStatus.OK);
     }
 
