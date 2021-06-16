@@ -66,7 +66,7 @@ public class OrderServiceImp implements OrderService {
 
         // next we have to filter does that are currently not busy
         var ridersAvailable = ridersLogged.stream().filter((
-                user -> user.getRider().getBusy() == false
+                user -> !user.getRider().getBusy()
                 )).collect(Collectors.toList());
 
         // and finally, we can pre-assign one rider to the order

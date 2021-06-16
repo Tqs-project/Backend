@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.security.SecureRandom;
@@ -50,9 +51,9 @@ public class RiderServiceImp implements RiderService {
 
     private final SecureRandom rand = new SecureRandom();
 
-    public RiderDto registerRider(RiderDto riderDto) throws Exception {
+    public RiderDto registerRider(RiderDto riderDto) {
         if (repository.existsByUser_Email(riderDto.getUser().getEmail())) {
-            throw new Exception("That email is already in use!");
+            throw new EntityExistsException("That email is already in use!");
         } else {
             var user = new User(
                     riderDto.getUser().getUsername(),
@@ -244,7 +245,7 @@ public class RiderServiceImp implements RiderService {
 
         // next we have to filter does that are currently not busy or are different from the last rider
         var ridersAvailable = ridersLogged.stream().filter((
-                user -> user.getRider().getBusy() == false && !user.getUsername().equals(username)
+                user -> !user.getRider().getBusy() && !user.getUsername().equals(username)
         )).collect(Collectors.toList());
 
         // and finally, we can pre-assign one rider to the order

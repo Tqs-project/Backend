@@ -18,28 +18,28 @@ public class OrdersCache {
      * specifications of the order
      * And after that, he can accept or decline the order
      */
-    private HashMap<String, Long> ordersCache;
+    private HashMap<String, Long> ordersAssigned;
     private Queue<Long> waitingOrdersQueue;
 
     public OrdersCache() {
-        ordersCache = new HashMap<>();
+        ordersAssigned = new HashMap<>();
         waitingOrdersQueue = new LinkedList<>();
     }
 
     public void assignOrder(String usernameRider, Long orderId) {
-        this.ordersCache.put(usernameRider, orderId);
+        this.ordersAssigned.put(usernameRider, orderId);
     }
 
     public Long retrieveAssignedOrder(String username) {
-        return this.ordersCache.get(username);
+        return this.ordersAssigned.get(username);
     }
 
     public void removeOrderAssignment(String usernameRider) {
-        this.ordersCache.remove(usernameRider);
+        this.ordersAssigned.remove(usernameRider);
     }
 
     public boolean riderHasNewAssignments(String usernameRider) {
-        return this.ordersCache.containsKey(usernameRider);
+        return this.ordersAssigned.containsKey(usernameRider);
     }
 
     public void addOrderToQueue(Long orderId) { this.waitingOrdersQueue.add(orderId); }
@@ -51,12 +51,7 @@ public class OrdersCache {
     }
 
     public void deleteAllOrders() {
-        this.ordersCache.clear();
+        this.ordersAssigned.clear();
         this.waitingOrdersQueue.clear();
-    }
-
-    public void showMap() {
-        for (Map.Entry<String, Long> entry : ordersCache.entrySet())
-            System.out.println(entry.getKey() + " ----------> " + entry.getValue());
     }
 }

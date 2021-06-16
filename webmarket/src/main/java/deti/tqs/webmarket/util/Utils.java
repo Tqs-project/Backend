@@ -54,7 +54,7 @@ public class Utils {
 
     public static OrderDto parseOrderDto(Order order) {
 
-        OrderDto orderDto =new OrderDto(
+        return new OrderDto(
                 order.getId(),
                 order.getOrderTimestamp(),
                 order.getPaymentType(),
@@ -65,7 +65,5 @@ public class Utils {
                 order.getCustomer() == null ? null : order.getCustomer().getUser().getUsername(),
                 order.getRide() == null ? null : order.getRide().getId()
         );
-
-        return orderDto;
     }
 }

@@ -6,7 +6,7 @@ import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.model.Rider;
 
 public interface RiderService {
-    RiderDto registerRider(RiderDto riderDto) throws Exception;
+    RiderDto registerRider(RiderDto riderDto);
     Rider updateRider(RiderDto riderDto);
     TokenDto login(RiderDto riderDto);
     boolean updateOrderDelivered(Long orderId);

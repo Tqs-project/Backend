@@ -702,7 +702,7 @@ class RiderController_RestTemplateIT {
         var secondRiderResponse = restTemplate.exchange(
                 "/api/riders/order",
                 HttpMethod.GET,
-                new HttpEntity<>(riderHeaders),
+                new HttpEntity<>(secondRiderHeaders),
                 OrderDto.class
         );
 

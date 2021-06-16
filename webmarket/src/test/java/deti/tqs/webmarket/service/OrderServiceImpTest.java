@@ -99,7 +99,7 @@ class OrderServiceImpTest {
         orderCreateDtoRet.setUsername("Maria");
         orderCreateDtoRet.setLocation("Rua da Macieira, 15");
         orderCreateDtoRet.setStatus("WAITING");
-        orderCreateDtoRet.setCustomer_id(3L);
+        orderCreateDtoRet.setCustomerId(3L);
 
         order = new Order(orderCreateDto.getPaymentType(), orderCreateDto.getCost(), customer, orderCreateDto.getLocation());
 

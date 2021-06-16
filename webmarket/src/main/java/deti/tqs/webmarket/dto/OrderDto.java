@@ -22,11 +22,11 @@ public class OrderDto {
 
     private String location;
 
-    private Long customer_id;
+    private Long customerId;
 
     private String username;
 
-    private Long ride_id;
+    private Long rideId;
 
 }
 
