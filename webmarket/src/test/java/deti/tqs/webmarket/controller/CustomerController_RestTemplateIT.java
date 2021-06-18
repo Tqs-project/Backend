@@ -229,7 +229,7 @@ class CustomerController_RestTemplateIT {
 
         // return the order previously created
         var responseOrderDto = restTemplate.exchange(
-                "/api/customer/order/" + createOrderResponse.getBody().getId(),
+                "/api/customer/orders/" + createOrderResponse.getBody().getId(),
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 OrderDto.class

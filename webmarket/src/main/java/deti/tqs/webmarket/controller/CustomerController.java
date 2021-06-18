@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Log4j2
 @RestController
 @RequestMapping("/api/customer")
@@ -109,7 +111,7 @@ public class CustomerController {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/order/{id}")
+    @GetMapping("/orders/{id}")
     public ResponseEntity<OrderDto> getOrder(@RequestHeader String username,
                                              @RequestHeader String idToken,
                                              @PathVariable Long id) {
@@ -129,5 +131,19 @@ public class CustomerController {
     }
 
     // TODO return orders of customer
+    @GetMapping("/orders")
+    public ResponseEntity<List<OrderDto>> getCustomerOrders(@RequestHeader String username,
+                                                            @RequestHeader String idToken) {
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        return new ResponseEntity<>(
+                this.customerService.getAllCustomerOrders(username),
+                HttpStatus.OK
+        );
+    }
 }

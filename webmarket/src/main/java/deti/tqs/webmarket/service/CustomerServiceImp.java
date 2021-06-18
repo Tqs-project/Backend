@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Optional;
 
 @Log4j2
@@ -131,4 +132,9 @@ public class CustomerServiceImp implements CustomerService{
         );
     }
 
+    @Override
+    public List<OrderDto> getAllCustomerOrders(String username) {
+        //var orders = orderRepository.findBy;
+        return null;
+    }
 }
