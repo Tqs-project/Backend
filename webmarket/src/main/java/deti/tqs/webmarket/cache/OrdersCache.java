@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Queue;
 
 @Component
-@Transactional
 public class OrdersCache {
     /**
      * This class with have the purpose of store all the assignments made for orders
