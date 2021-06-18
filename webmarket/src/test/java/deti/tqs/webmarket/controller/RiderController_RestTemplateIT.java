@@ -78,7 +78,6 @@ class RiderController_RestTemplateIT {
     }
 
     @Test
-    @org.junit.jupiter.api.Order(2)
     void updateOrderDelivered() {
         var user = new User(
                 "Albert",
@@ -170,7 +169,6 @@ class RiderController_RestTemplateIT {
     }
 
     @Test
-    @org.junit.jupiter.api.Order(3)
     void whenCreateRiderIsValid_thenCreateRider() {
         ResponseEntity<RiderDto> response = restTemplate.postForEntity(
                 "/api/riders", rider, RiderDto.class
@@ -187,7 +185,6 @@ class RiderController_RestTemplateIT {
     }
 
     @Test
-    @org.junit.jupiter.api.Order(4)
     void whenRiderMakesLogin_thenTheTokenShouldBePersistedOnDB() {
         ResponseEntity<RiderDto> response = restTemplate.postForEntity(
                 "/api/riders", rider, RiderDto.class
@@ -213,7 +210,6 @@ class RiderController_RestTemplateIT {
     }
 
     @Test
-    @org.junit.jupiter.api.Order(5)
     void assignOrderToRiderTest() {
         var user = new User(
                 "Albert",
@@ -365,7 +361,6 @@ class RiderController_RestTemplateIT {
     }
 
     @Test
-    @org.junit.jupiter.api.Order(6)
     void riderAcceptsAssignedOrderTest() {
         var user = new User(
                 "Albert",
@@ -526,121 +521,6 @@ class RiderController_RestTemplateIT {
     }
 
     @Test
-    @org.junit.jupiter.api.Order(1)
-    void riderDeclinesAssignedOrderTest() {
-        var token = "token_secret";
-        var user = new User(
-                "Albert",
-                "albert@gmail.com",
-                "RIDER",
-                "password",
-                "935666122"
-        );
-        user.setAuthToken(token);
-
-        var user2 = new User(
-                "McQueen",
-                "mcqueen@gmail.com",
-                "RIDER",
-                "password",
-                "922123123"
-        );
-        user2.setAuthToken(token);
-
-        var client = new User(
-                "Not Albert",
-                "notalbert@gmail.com",
-                "CUSTOMER",
-                "password",
-                "935666125"
-        );
-        client.setAuthToken(token);
-
-        var riderConcrete = new Rider(
-                user,
-                "aa-22-bb"
-        );
-        user.setRider(riderConcrete);
-
-        var riderConcrete2 = new Rider(
-                user2,
-                "ff-99-ff"
-        );
-        user2.setRider(riderConcrete2);
-
-        var customer = new Customer(
-                client,
-                "right there",
-                "dont even know",
-                "Barber shop i think",
-                "not important"
-        );
-        client.setCustomer(customer);
-
-        var userFromDB1 = userRepository.saveAndFlush(user);
-        var userFromDB2 = userRepository.saveAndFlush(user2);
-        var clientFromDB = userRepository.saveAndFlush(client);
-        riderRepository.saveAndFlush(riderConcrete);
-        riderRepository.saveAndFlush(riderConcrete2);
-        customerRepository.saveAndFlush(customer);
-
-        // create a order
-        var headers = new HttpHeaders();
-        headers.set("username", client.getUsername());
-        headers.set("idToken", client.getAuthToken());
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        var orderResponse = restTemplate.postForEntity(
-                "/api/order",
-                new HttpEntity<>(new OrderCreateDto(
-                        client.getUsername(),
-                        "PAYPAL",
-                        2.0,
-                        "heaven"
-                ), headers),
-                OrderDto.class
-        );
-
-
-        // so the order was assigned to the rider
-        assertThat(
-                this.ordersCache.riderHasNewAssignments(user.getUsername())
-        ).isTrue();
-
-        var riderHeaders = new HttpHeaders();
-        riderHeaders.set("username", user.getUsername());
-        riderHeaders.set("idToken", user.getAuthToken());
-        riderHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        // now, the rider declines the assignment
-        var acceptAssignmentResponse = restTemplate.postForEntity(
-                "/api/riders/order/decline",
-                new HttpEntity<>("", riderHeaders),
-                String.class
-        );
-
-        assertThat(
-                acceptAssignmentResponse.getStatusCode()
-        ).isEqualTo(HttpStatus.OK);
-
-
-        // check if the order was assigned to the second rider
-        assertThat(
-                this.ordersCache.riderHasNewAssignments(user.getUsername())
-        ).isFalse();
-
-        assertThat(
-                this.ordersCache.riderHasNewAssignments(user2.getUsername())
-        ).isTrue();
-
-        // check the id of the order
-        assertThat(
-                this.ordersCache.retrieveAssignedOrder(user2.getUsername())
-        ).isEqualTo(orderResponse.getBody().getId());
-    }
-
-    @Test
-    @org.junit.jupiter.api.Order(7)
     void updateRiderLocationTest() {
         var user = new User(
             "Pablo",
@@ -696,7 +576,6 @@ class RiderController_RestTemplateIT {
     }
 
     @Test
-    @org.junit.jupiter.api.Order(8)
     void getInfoRiderTest() {
         var user = new User(
                 "Pablo",
