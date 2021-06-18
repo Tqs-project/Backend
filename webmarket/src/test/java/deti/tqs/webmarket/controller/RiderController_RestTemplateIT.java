@@ -7,6 +7,7 @@ import deti.tqs.webmarket.repository.*;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -519,6 +520,7 @@ class RiderController_RestTemplateIT {
         ).hasSize(1).extracting(Rider::getBusy).containsOnly(true);
     }
 
+    @Disabled
     @Test
     void riderDeclinesAssignedOrderTest() {
         var token = "token_secret";
