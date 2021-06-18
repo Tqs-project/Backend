@@ -1,6 +1,7 @@
 package deti.tqs.webmarket.cache;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.Queue;
 
 @Component
+@Transactional
 public class OrdersCache {
     /**
      * This class with have the purpose of store all the assignments made for orders
