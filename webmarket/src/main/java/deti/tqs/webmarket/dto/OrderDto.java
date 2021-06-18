@@ -20,6 +20,8 @@ public class OrderDto {
 
     private Double cost;
 
+    private String customerLocation;
+
     private String location;
 
     private Long customerId;

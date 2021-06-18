@@ -1,9 +1,9 @@
 package deti.tqs.webmarket.util;
 
-import deti.tqs.webmarket.dto.CustomerDto;
+import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.model.Customer;
-import deti.tqs.webmarket.dto.OrderDto;
 import deti.tqs.webmarket.model.Order;
+import deti.tqs.webmarket.model.Rider;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.Timestamp;
@@ -60,10 +60,36 @@ public class Utils {
                 order.getPaymentType(),
                 order.getStatus(),
                 order.getCost(),
+                order.getCustomer().getAddress(),
                 order.getLocation(),
                 order.getCustomer() == null ? null : order.getCustomer().getId(),
                 order.getCustomer() == null ? null : order.getCustomer().getUser().getUsername(),
                 order.getRide() == null ? null : order.getRide().getId()
         );
+    }
+
+    public static RiderFullInfoDto parseRiderDto(Rider rider) {
+        var comments = new ArrayList<Long>();
+        rider.getComments().forEach(
+                comment -> comments.add(comment.getId())
+        );
+
+        var rides = new ArrayList<Long>();
+        rider.getRides().forEach(
+                ride -> rides.add(ride.getId())
+        );
+        return new RiderFullInfoDto(
+                rider.getId(),
+                rider.getUser().getUsername(),
+                rider.getUser().getEmail(),
+                rider.getUser().getRole(),
+                rider.getUser().getPhoneNumber(),
+                rider.getVehiclePlate(),
+                comments,
+                rider.getLat(),
+                rider.getLng(),
+                rider.getBusy(),
+                rides
+            );
     }
 }

@@ -4,6 +4,7 @@ import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.model.Rider;
 import deti.tqs.webmarket.service.RiderServiceImp;
+import deti.tqs.webmarket.util.Utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -126,5 +127,25 @@ public class RiderController {
         log.info("Rider with username {" + username + "} does not accepted the order assigned to him.");
         return new ResponseEntity<>("No problem at all", HttpStatus.OK);
     }
+
+    // TODO post para atualizar localizaćão rider
+
+    @GetMapping("/info")
+    public ResponseEntity<RiderFullInfoDto> getRider(@RequestHeader String username,
+                             @RequestHeader String idToken) {
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>(new RiderFullInfoDto(), HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>(new RiderFullInfoDto(), HttpStatus.UNAUTHORIZED);
+
+        return new ResponseEntity<>(
+                Utils.parseRiderDto(user.get().getRider()),
+                HttpStatus.OK
+        );
+    }
+
+    // TODO update de dados do rider
 
 }

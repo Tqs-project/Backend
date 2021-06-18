@@ -1,9 +1,7 @@
 package deti.tqs.webmarket.util;
 
-import deti.tqs.webmarket.model.Comment;
-import deti.tqs.webmarket.model.Customer;
-import deti.tqs.webmarket.model.Order;
-import deti.tqs.webmarket.model.User;
+import deti.tqs.webmarket.dto.RiderFullInfoDto;
+import deti.tqs.webmarket.model.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +9,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 class UtilsTest {
@@ -85,6 +84,17 @@ class UtilsTest {
                 "In a galaxy far away"
         );
         order.setId(1L);
+        var customer = new Customer();
+        customer.setAddress("Front Street hell");
+        customer.setId(2L);
+
+        var user = new User();
+        user.setUsername(
+                "Rogério"
+        );
+        customer.setUser(user);
+
+        order.setCustomer(customer);
 
         var parsing = Utils.parseOrderDto(order);
 
@@ -94,10 +104,55 @@ class UtilsTest {
 
         Assertions.assertThat(
                 parsing
-        ).extracting("customerId").isNull();
+        ).extracting("customerId").isEqualTo(2L);
 
         Assertions.assertThat(
                 parsing
-        ).extracting("username").isNull();
+        ).extracting("username").isEqualTo(user.getUsername());
+    }
+
+    @Test
+    void parseRiderDtoTest() {
+        var rider = new Rider(
+                new User(
+                    "Pablo",
+                        "soimepablo@gmail.com",
+                        "RIDER",
+                        "secret",
+                        "935776666"
+                ),
+                "plate"
+        );
+        rider.setId(1L);
+        rider.setLat("2");
+        rider.setLng("3");
+        rider.setBusy(false);
+
+        var comment1 = new Comment();
+        var comment2 = new Comment();
+        comment1.setId(100L);
+        comment2.setId(111L);
+
+        rider.setComments(
+                Arrays.asList(
+                        comment1,
+                        comment2
+                )
+        );
+        rider.setRides(new ArrayList<>());
+
+        var parsed = Utils.parseRiderDto(rider);
+
+        Assertions.assertThat(
+                parsed
+        ).extracting(RiderFullInfoDto::getUsername)
+                .isEqualTo(rider.getUser().getUsername());
+
+        Assertions.assertThat(
+                parsed
+        ).extracting(RiderFullInfoDto::getComments)
+                .isEqualTo(
+                        Arrays.asList(100L, 111L)
+                );
     }
 }

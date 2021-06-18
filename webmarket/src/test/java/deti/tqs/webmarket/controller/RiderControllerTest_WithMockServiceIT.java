@@ -367,6 +367,7 @@ class RiderControllerTest_WithMockServiceIT {
                 "PAYPAL",
                 "WAITING",
                 5.0,
+                "hell",
                 "heaven",
                 12L,
                 "Mercadona",

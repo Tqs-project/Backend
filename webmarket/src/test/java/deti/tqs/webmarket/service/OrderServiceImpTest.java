@@ -138,6 +138,7 @@ class OrderServiceImpTest {
 
         var res = orderServiceImp.createOrder(orderCreateDto);
         res.setOrderTimestamp(null);
+        orderCreateDtoRet.setCustomerLocation("Front Street");
         assertThat(res).isEqualTo(orderCreateDtoRet);
     }
 

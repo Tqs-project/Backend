@@ -347,6 +347,7 @@ class RiderServiceImpTest {
                 order.getPaymentType(),
                 order.getStatus(),
                 order.getCost(),
+                "hell",
                 order.getLocation(),
                 order.getCustomer().getId(),
                 order.getCustomer().getUser().getUsername(),
