@@ -1,6 +1,7 @@
 package deti.tqs.webmarket.cache;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,8 +27,8 @@ public class OrdersCache {
         waitingOrdersQueue = new LinkedList<>();
     }
 
-    public Map getAssignments() { return this.ordersAssigned; }
-    public Queue getWaitingAssignmentOrders() { return this.waitingOrdersQueue; }
+    public Map<String, Long> getAssignments() { return this.ordersAssigned; }
+    public Queue<Long> getWaitingAssignmentOrders() { return this.waitingOrdersQueue; }
 
     public void assignOrder(String usernameRider, Long orderId) {
         this.ordersAssigned.put(usernameRider, orderId);

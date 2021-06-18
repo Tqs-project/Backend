@@ -1,12 +1,11 @@
 package deti.tqs.webmarket.controller;
 
-import deti.tqs.webmarket.dto.CustomerCreateDto;
-import deti.tqs.webmarket.dto.CustomerDto;
-import deti.tqs.webmarket.dto.CustomerLoginDto;
-import deti.tqs.webmarket.dto.TokenDto;
+import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.model.Customer;
+import deti.tqs.webmarket.model.Order;
 import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.repository.CustomerRepository;
+import deti.tqs.webmarket.repository.OrderRepository;
 import deti.tqs.webmarket.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +36,9 @@ class CustomerController_RestTemplateIT {
     private CustomerRepository customerRepository;
 
     @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     private CustomerCreateDto customer;
@@ -54,10 +56,9 @@ class CustomerController_RestTemplateIT {
         customer.setIban("PT50000201231234567890155");
     }
 
-    // assertThat(response.getBody()).extracting(class::getName).containsExactly("", "");
-
     @AfterEach
     void tearDown() {
+        orderRepository.deleteAll();
         customerRepository.deleteAll();
         userRepository.deleteAll();
     }
@@ -117,6 +118,50 @@ class CustomerController_RestTemplateIT {
     }
 
     @Test
+    void getCustomerInformationTest() {
+        var user = new User(
+                customer.getUsername(),
+                customer.getEmail(),
+                "CUSTOMER",
+                customer.getPassword(),
+                customer.getPhoneNumber()
+        );
+        var customerConcrete = new Customer(
+                user,
+                customer.getAddress(),
+                customer.getDescription(),
+                customer.getTypeOfService(),
+                customer.getIban()
+        );
+        user.setCustomer(customerConcrete);
+        user.setAuthToken("token");
+
+        userRepository.saveAndFlush(user);
+        customerRepository.saveAndFlush(customerConcrete);
+
+        var headers = new HttpHeaders();
+        headers.set("username", customer.getUsername());
+        headers.set("idToken", "token");
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        var response = restTemplate.exchange(
+                "/api/customer",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                CustomerDto.class
+        );
+
+        assertThat(
+                response.getStatusCode()
+        ).isEqualTo(HttpStatus.OK);
+
+        assertThat(
+                response.getBody()
+        ).extracting(CustomerDto::getUsername)
+                .isEqualTo(customer.getUsername());
+    }
+
+    @Test
     void whenCustomerMakesLogin_thenTheTokenShouldBePersistedOnDB() {
         // TODO change to saveandflush
         ResponseEntity<CustomerDto> response = restTemplate.postForEntity(
@@ -139,5 +184,127 @@ class CustomerController_RestTemplateIT {
         // verify if the token attribute was added to the customer row
         var found = userRepository.findAll();
         assertThat(found).extracting(User::getAuthToken).isNotNull();
+    }
+
+    @Test
+    void getOrderTest() {
+        ResponseEntity<CustomerDto> response = restTemplate.postForEntity(
+                "/api/customer", customer, CustomerDto.class
+        );
+
+        var userId = response.getBody().getId();
+        System.out.println(userId);
+
+        var userOptional = userRepository.findById(userId);
+
+        assertThat(userOptional).isPresent();
+
+        var user = userOptional.get();
+        user.setAuthToken("token");
+
+        userRepository.saveAndFlush(user);
+
+        // create a order
+        var headers = new HttpHeaders();
+        headers.set("username", customer.getUsername());
+        headers.set("idToken", user.getAuthToken());
+
+        var createOrderResponse = restTemplate.postForEntity(
+                "/api/order",
+                new HttpEntity<>(
+                        new OrderCreateDto(
+                            user.getUsername(),
+                                "PAYPAL",
+                                2.0,
+                                "Candy Land"
+                        ),
+                        headers
+                ),
+                OrderDto.class
+        );
+
+        assertThat(
+                createOrderResponse.getStatusCode()
+        ).isEqualTo(HttpStatus.CREATED);
+
+        // return the order previously created
+        var responseOrderDto = restTemplate.exchange(
+                "/api/customer/orders/" + createOrderResponse.getBody().getId(),
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                OrderDto.class
+        );
+
+        assertThat(responseOrderDto.getStatusCode())
+                .isEqualTo(HttpStatus.OK);
+
+        assertThat(
+                responseOrderDto.getBody()
+        ).extracting(OrderDto::getStatus)
+                .isEqualTo("WAITING");
+
+        assertThat(
+                responseOrderDto.getBody()
+        ).extracting(OrderDto::getUsername)
+                .isEqualTo(customer.getUsername());
+    }
+
+    @Test
+    void getAllCustomerOrdersTest() {
+        var user = new User(
+                customer.getUsername(),
+                customer.getEmail(),
+                "CUSTOMER",
+                customer.getPassword(),
+                customer.getPhoneNumber()
+        );
+        var customerConcrete = new Customer(
+                user,
+                customer.getAddress(),
+                customer.getDescription(),
+                customer.getTypeOfService(),
+                customer.getIban()
+        );
+        user.setCustomer(customerConcrete);
+        user.setAuthToken("token");
+
+        userRepository.saveAndFlush(user);
+        customerRepository.saveAndFlush(customerConcrete);
+
+        var order1 = new Order(
+                "PAYPAL",
+                2.34,
+                customerConcrete,
+                "Candy Shop Center"
+        );
+        var order2 = new Order(
+                "PAYPAL",
+                3.12,
+                customerConcrete,
+                "I dont know"
+        );
+        orderRepository.save(order1);
+        orderRepository.saveAndFlush(order2);
+
+        var headers = new HttpHeaders();
+        headers.set("username", user.getUsername());
+        headers.set("idToken", "token");
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        var response = restTemplate.exchange(
+                "/api/customer/orders",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                OrderDto[].class
+        );
+
+        assertThat(
+                response.getStatusCode()
+        ).isEqualTo(HttpStatus.OK);
+
+        assertThat(
+                response.getBody()
+        ).hasSize(2).extracting(OrderDto::getLocation)
+                .containsExactly("Candy Shop Center", "I dont know");
     }
 }

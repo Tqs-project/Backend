@@ -26,7 +26,7 @@ public class AdminController {
     private AdminService adminService;
 
     @GetMapping("/orderscache/assignments")
-    public ResponseEntity<Map> getCurrentAssignments() {
+    public ResponseEntity<Map<String, Long>> getCurrentAssignments() {
         // TODO authentication
         return new ResponseEntity<>(
                 this.adminService.getCurrentAssignments(),
@@ -35,7 +35,7 @@ public class AdminController {
     }
 
     @GetMapping("/orderscache/waitingqueue")
-    public ResponseEntity<Queue> getWaitingQueueOrders() {
+    public ResponseEntity<Queue<Long>> getWaitingQueueOrders() {
         return new ResponseEntity<>(
                 this.adminService.getWaitingOrdersAssignment(),
                 HttpStatus.OK

@@ -176,7 +176,8 @@
 					<argLine>${surefireArgLine}</argLine>
 					<!-- Skips unit tests if the value of skip.unit.tests property is true -->
 					<skipTests>${skip.unit.tests}</skipTests>
-					<!-- Excludes integration tests when unit tests are run. -->
+					<!-- Excludes integration tests when unit tests are run.
+					<parallelOptimized>false</parallelOptimized>-->
 					<excludes>
 						<exclude>**/IT*.java</exclude>
 					</excludes>

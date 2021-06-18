@@ -14,12 +14,12 @@ public class AdminServiceImp implements AdminService{
     private OrdersCache ordersCache;
 
     @Override
-    public Map getCurrentAssignments() {
+    public Map<String, Long> getCurrentAssignments() {
         return this.ordersCache.getAssignments();
     }
 
     @Override
-    public Queue getWaitingOrdersAssignment() {
+    public Queue<Long> getWaitingOrdersAssignment() {
         return this.ordersCache.getWaitingAssignmentOrders();
     }
 

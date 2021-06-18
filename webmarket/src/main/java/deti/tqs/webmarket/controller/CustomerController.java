@@ -1,16 +1,16 @@
 package deti.tqs.webmarket.controller;
 
-import deti.tqs.webmarket.dto.CustomerCreateDto;
-import deti.tqs.webmarket.dto.CustomerDto;
-import deti.tqs.webmarket.dto.CustomerLoginDto;
-import deti.tqs.webmarket.dto.TokenDto;
+import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.CustomerService;
+import deti.tqs.webmarket.util.Utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Log4j2
 @RestController
@@ -77,6 +77,23 @@ public class CustomerController {
                 HttpStatus.OK);
     }
 
+    @GetMapping()
+    public ResponseEntity<CustomerDto> getCustomerInformation(@RequestHeader String username,
+                                                              @RequestHeader String idToken) {
+
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>(new CustomerDto(), HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>(new CustomerDto(), HttpStatus.UNAUTHORIZED);
+
+        return new ResponseEntity<>(
+                Utils.parseCustomerDto(user.get().getCustomer()),
+                HttpStatus.OK
+        );
+    }
+
     @PostMapping("/signin")
     public ResponseEntity<TokenDto> login(@RequestBody CustomerLoginDto customerDto) {
         log.info("Logging in user");
@@ -94,8 +111,39 @@ public class CustomerController {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
-    // TODO check status of orders
+    @GetMapping("/orders/{id}")
+    public ResponseEntity<OrderDto> getOrder(@RequestHeader String username,
+                                             @RequestHeader String idToken,
+                                             @PathVariable Long id) {
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>(new OrderDto(), HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>(new OrderDto(), HttpStatus.UNAUTHORIZED);
+
+        // check if the order is from the customer specified
+        if (!this.customerService.orderBelongsToCustomer(user.get().getCustomer(), id))
+            return new ResponseEntity<>(new OrderDto(), HttpStatus.NO_CONTENT);
+
+        return new ResponseEntity<>(this.customerService.getCustomerOrder(id),
+                HttpStatus.OK);
+    }
 
     // TODO return orders of customer
+    @GetMapping("/orders")
+    public ResponseEntity<List<OrderDto>> getCustomerOrders(@RequestHeader String username,
+                                                            @RequestHeader String idToken) {
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        return new ResponseEntity<>(
+                this.customerService.getAllCustomerOrders(username),
+                HttpStatus.OK
+        );
+    }
 }

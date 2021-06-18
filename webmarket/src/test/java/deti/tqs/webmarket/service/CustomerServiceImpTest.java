@@ -3,6 +3,7 @@ package deti.tqs.webmarket.service;
 import deti.tqs.webmarket.dto.CustomerDto;
 import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.model.Customer;
+import deti.tqs.webmarket.model.Order;
 import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.repository.CustomerRepository;
 import deti.tqs.webmarket.repository.UserRepository;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -274,5 +276,33 @@ class CustomerServiceImpTest {
         Mockito.verify(encoder, Mockito.times(1)).matches(
                 customerCreateDto.getPassword(), correctPassword + "-encoded"
         );
+    }
+
+    @Test
+    void orderBelongsToCustomerTest() {
+        var customer = new Customer();
+
+        var order1 = new Order();
+        order1.setId(1L);
+        var order2 = new Order();
+        order2.setId(2L);
+        var order3 = new Order();
+        order3.setId(3L);
+
+        customer.setOrders(
+                Arrays.asList(
+                        order1,
+                        order2,
+                        order3
+                )
+        );
+
+        assertThat(
+                this.customerService.orderBelongsToCustomer(customer, 1L)
+        ).isTrue();
+
+        assertThat(
+                this.customerService.orderBelongsToCustomer(customer, 5L)
+        ).isFalse();
     }
 }

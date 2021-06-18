@@ -76,6 +76,50 @@ class OrderRepositoryTest {
     }
 
     @Test
+    void returnTheOrdersUsingTheCustomerUsername() {
+        var user2 = new User(
+                "Frank Sinatra",
+                "franky@gmail.com",
+                "CUSTOMER",
+                "password",
+                "93555555"
+        );
+
+        var customer2 = new Customer(
+                user2,
+                "Back street",
+                "Very good restaurant, you can trust",
+                "Restaurant",
+                "PT50000201231234567890154"
+        );
+
+        var frankOrder = new Order(
+                "MBWAY",
+                1.99,
+                customer2,
+                "Rua da Lagosta, 15, Anadia 1111-111"
+        );
+        customer2.getOrders().add(frankOrder);
+
+        this.entityManager.persist(user2);
+        this.entityManager.persist(customer2);
+        this.entityManager.persist(frankOrder);
+        this.entityManager.flush();
+
+        Assertions.assertThat(
+                this.orderRepository.findOrdersByCustomer_User_Username(
+                        this.customer.getUser().getUsername()
+                )
+        ).contains(this.order, this.order2).doesNotContain(frankOrder);
+
+        Assertions.assertThat(
+                this.orderRepository.findOrdersByCustomer_User_Username(
+                        user2.getUsername()
+                )
+        ).contains(frankOrder).doesNotContain(this.order, this.order2);
+    }
+
+    @Test
     void whenPaymentMethodEqualsCash_thenAExceptionShouldBeRaised() {
         var order10 = new Order(
                 "CASH",

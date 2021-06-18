@@ -13,4 +13,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findOrdersByOrderTimestampAfter(Timestamp timestamp);
     List<Order> findOrdersByOrderTimestampBefore(Timestamp timestamp);
     List<Order> findOrdersByCustomer(Customer customer);
+    List<Order> findOrdersByCustomer_User_Username(String username);
 }
