@@ -714,4 +714,100 @@ class RiderController_RestTemplateIT {
                 secondRiderResponse.getBody()
         ).extracting(OrderDto::getId).isNotNull();
     }
+
+    @Test
+    void updateRiderLocationTest() {
+        var user = new User(
+            "Pablo",
+                "pablo@gmail.com",
+                "RIDER",
+                "password",
+                "999999999"
+        );
+        var rider = new Rider(
+                user,
+                "plate"
+        );
+        user.setAuthToken("token");
+        user.setRider(rider);
+
+        userRepository.saveAndFlush(user);
+        riderRepository.saveAndFlush(rider);
+
+        var headers = new HttpHeaders();
+        headers.set("username", user.getUsername());
+        headers.set("idToken", user.getAuthToken());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        var response = restTemplate.postForEntity(
+                "/api/riders/location",
+                    new HttpEntity<>(
+                            new LocationDto(
+                                    "2",
+                                    "4"
+                            ),
+                            headers
+                    ),
+                String.class
+        );
+
+        assertThat(
+                response.getStatusCode()
+        ).isEqualTo(HttpStatus.OK);
+
+        assertThat(
+                response.getBody()
+        ).isEqualTo("Location updated successfully.");
+
+        var found = riderRepository.findAll();
+
+        assertThat(
+                found
+        ).hasSize(1).extracting(Rider::getLat).containsOnly("2");
+
+        assertThat(
+                found
+        ).extracting(Rider::getLng).containsOnly("4");
+    }
+
+    @Test
+    void getInfoRiderTest() {
+        var user = new User(
+                "Pablo",
+                "pablo@gmail.com",
+                "RIDER",
+                "password",
+                "999999999"
+        );
+        var rider = new Rider(
+                user,
+                "plate"
+        );
+        user.setAuthToken("token");
+        user.setRider(rider);
+
+        userRepository.saveAndFlush(user);
+        var riderGetTheId = riderRepository.saveAndFlush(rider);
+
+        var headers = new HttpHeaders();
+        headers.set("username", user.getUsername());
+        headers.set("idtoken", user.getAuthToken());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        var response = restTemplate.exchange(
+                "/api/riders",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                RiderFullInfoDto.class
+        );
+
+        assertThat(
+                response.getStatusCode()
+        ).isEqualTo(HttpStatus.OK);
+
+        assertThat(
+                response.getBody()
+        ).extracting("id")
+                .isEqualTo(riderGetTheId.getId());
+    }
 }

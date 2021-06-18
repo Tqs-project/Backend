@@ -5,6 +5,7 @@ import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.RiderServiceImp;
 import deti.tqs.webmarket.util.Utils;
 import lombok.extern.log4j.Log4j2;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -137,7 +138,22 @@ public class RiderController {
         return new ResponseEntity<>("No problem at all", HttpStatus.OK);
     }
 
-    // TODO post para atualizar localizaćão rider
+    @PostMapping("/location")
+    public ResponseEntity<String> updateRiderLocation(@RequestHeader String idToken,
+                                                      @RequestHeader String username,
+                                                      @RequestBody LocationDto location) {
+
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+
+        this.riderService.updateRiderLocation(user.get().getRider(), location);
+
+        return new ResponseEntity<>("Location updated successfully.", HttpStatus.OK);
+    }
 
     // TODO update de dados do rider
 

@@ -1,13 +1,10 @@
 package deti.tqs.webmarket.service;
 
 import deti.tqs.webmarket.cache.OrdersCache;
-import deti.tqs.webmarket.dto.OrderDto;
-import deti.tqs.webmarket.dto.UserDto;
+import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.model.Ride;
 import deti.tqs.webmarket.repository.OrderRepository;
 import deti.tqs.webmarket.repository.RideRepository;
-import deti.tqs.webmarket.dto.RiderDto;
-import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.model.Rider;
 import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.repository.RiderRepository;
@@ -158,14 +155,6 @@ public class RiderServiceImp implements RiderService {
         return true;
     }
 
-    public Optional<Rider> getRiderByEmail(String email) {
-        return repository.findByUser_Email(email);
-    }
-
-    public List<Rider> getAllRiders() {
-        return repository.findAll();
-    }
-
     @Override
     public boolean riderHasNewAssignment(String username) {
         return ordersCache.riderHasNewAssignments(username);
@@ -237,6 +226,13 @@ public class RiderServiceImp implements RiderService {
 
         // add the declined order into the queue or assign it to someone else
         assignOrderToAnotherRider(username, orderId);
+    }
+
+    @Override
+    public void updateRiderLocation(Rider rider, LocationDto location) {
+        rider.setLng(location.getLng());
+        rider.setLat(location.getLat());
+        repository.saveAndFlush(rider);
     }
 
     protected void assignOrderToAnotherRider(String username, Long orderId) {

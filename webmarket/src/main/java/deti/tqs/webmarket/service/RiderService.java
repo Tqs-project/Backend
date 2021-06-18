@@ -1,5 +1,6 @@
 package deti.tqs.webmarket.service;
 
+import deti.tqs.webmarket.dto.LocationDto;
 import deti.tqs.webmarket.dto.OrderDto;
 import deti.tqs.webmarket.dto.RiderDto;
 import deti.tqs.webmarket.dto.TokenDto;
@@ -16,4 +17,6 @@ public interface RiderService {
 
     void riderAcceptsAssignment(String username);
     void riderDeclinesAssignment(String username);
+
+    void updateRiderLocation(Rider rider, LocationDto location);
 }
