@@ -18,13 +18,16 @@ public class OrdersCache {
      * specifications of the order
      * And after that, he can accept or decline the order
      */
-    private HashMap<String, Long> ordersAssigned;
+    private Map<String, Long> ordersAssigned;
     private Queue<Long> waitingOrdersQueue;
 
     public OrdersCache() {
         ordersAssigned = new HashMap<>();
         waitingOrdersQueue = new LinkedList<>();
     }
+
+    public Map getAssignments() { return this.ordersAssigned; }
+    public Queue getWaitingAssignmentOrders() { return this.waitingOrdersQueue; }
 
     public void assignOrder(String usernameRider, Long orderId) {
         this.ordersAssigned.put(usernameRider, orderId);
