@@ -1,10 +1,13 @@
 package deti.tqs.webmarket.service;
 
 import deti.tqs.webmarket.dto.CustomerDto;
+import deti.tqs.webmarket.dto.OrderDto;
 import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.model.Customer;
+import deti.tqs.webmarket.model.Order;
 import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.repository.CustomerRepository;
+import deti.tqs.webmarket.repository.OrderRepository;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.util.Utils;
 import lombok.extern.log4j.Log4j2;
@@ -27,6 +30,9 @@ public class CustomerServiceImp implements CustomerService{
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private PasswordEncoder encoder;
@@ -103,6 +109,26 @@ public class CustomerServiceImp implements CustomerService{
             return new TokenDto(token, "");
         }
         return new TokenDto("", "Bad authentication parameters");
+    }
+
+    @Override
+    public boolean orderBelongsToCustomer(Customer customer, Long orderId) {
+        for (Order order : customer.getOrders())
+            if (order.getId().equals(orderId))
+                return true;
+
+        return false;
+    }
+
+    @Override
+    public OrderDto getCustomerOrder(Long orderId) {
+        return Utils.parseOrderDto(
+                this.orderRepository.findById(orderId).orElseThrow(
+                        () -> new EntityNotFoundException(
+                                "Order not found with id: " + orderId
+                        )
+                )
+        );
     }
 
 }

@@ -1,9 +1,6 @@
 package deti.tqs.webmarket.controller;
 
-import deti.tqs.webmarket.dto.CustomerCreateDto;
-import deti.tqs.webmarket.dto.CustomerDto;
-import deti.tqs.webmarket.dto.CustomerLoginDto;
-import deti.tqs.webmarket.dto.TokenDto;
+import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.CustomerService;
 import deti.tqs.webmarket.util.Utils;
@@ -112,7 +109,24 @@ public class CustomerController {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
-    // TODO check status of orders
+    @GetMapping("/order/{id}")
+    public ResponseEntity<OrderDto> getOrder(@RequestHeader String username,
+                                             @RequestHeader String idToken,
+                                             @PathVariable Long id) {
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>(new OrderDto(), HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>(new OrderDto(), HttpStatus.UNAUTHORIZED);
+
+        // check if the order is from the customer specified
+        if (!this.customerService.orderBelongsToCustomer(user.get().getCustomer(), id))
+            return new ResponseEntity<>(new OrderDto(), HttpStatus.NO_CONTENT);
+
+        return new ResponseEntity<>(this.customerService.getCustomerOrder(id),
+                HttpStatus.OK);
+    }
 
     // TODO return orders of customer
 

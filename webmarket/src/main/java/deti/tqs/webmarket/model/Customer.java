@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(exclude = "user")
 @Entity
 @Table(name = "customers")
 public class Customer {
