@@ -208,6 +208,8 @@ public class RiderServiceImp implements RiderService {
     @Override
     public void riderDeclinesAssignment(String username) {
 
+        log.info("User {" + username + "} declined the order");
+
         // first, check if the rider was assigned with some order
         if (!ordersCache.riderHasNewAssignments(username))
             return;
@@ -246,13 +248,11 @@ public class RiderServiceImp implements RiderService {
 
         // and finally, we can pre-assign one rider to the order
         // pre-assign, because he can decline the order
-        var assigned = false;
         for (User user : ridersAvailable) {
             if (!ordersCache.riderHasNewAssignments(user.getUsername())) {
                 ordersCache.assignOrder(user.getUsername(), orderId);
                 log.info("Order with id " + orderId + " was assigned to " + user.getUsername());
-                assigned = true;
-                break;
+                return;
             }
         }
 
@@ -263,8 +263,8 @@ public class RiderServiceImp implements RiderService {
          *
          * so, we have to store this order
          */
-        if (!assigned)
-            ordersCache.addOrderToQueue(orderId);
+        log.info("Storing order at queue with id: " + orderId);
+        ordersCache.addOrderToQueue(orderId);
     }
 
 }
