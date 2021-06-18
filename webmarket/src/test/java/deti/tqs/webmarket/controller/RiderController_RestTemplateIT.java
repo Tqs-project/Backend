@@ -521,6 +521,7 @@ class RiderController_RestTemplateIT {
 
     @Test
     void riderDeclinesAssignedOrderTest() {
+        var token = "token_secret";
         var user = new User(
                 "Albert",
                 "albert@gmail.com",
@@ -528,6 +529,7 @@ class RiderController_RestTemplateIT {
                 "password",
                 "935666122"
         );
+        user.setAuthToken(token);
 
         var user2 = new User(
                 "McQueen",
@@ -536,6 +538,7 @@ class RiderController_RestTemplateIT {
                 "password",
                 "922123123"
         );
+        user2.setAuthToken(token);
 
         var client = new User(
                 "Not Albert",
@@ -544,6 +547,7 @@ class RiderController_RestTemplateIT {
                 "password",
                 "935666125"
         );
+        client.setAuthToken(token);
 
         var riderConcrete = new Rider(
                 user,
@@ -566,95 +570,20 @@ class RiderController_RestTemplateIT {
         );
         client.setCustomer(customer);
 
-        // create customer
-        restTemplate.postForEntity(
-                "/api/customer",
-                new CustomerCreateDto(
-                        client.getUsername(),
-                        client.getEmail(),
-                        client.getPassword(),
-                        client.getPhoneNumber(),
-                        customer.getAddress(),
-                        customer.getDescription(),
-                        customer.getImageUrl(),
-                        customer.getTypeOfService(),
-                        customer.getIban()
-                ),
-                CustomerDto.class
-        );
-        // create rider
-        restTemplate.postForEntity(
-                "/api/riders",
-                new RiderDto(
-                        new UserDto(
-                                user.getUsername(),
-                                user.getEmail(),
-                                "",
-                                user.getPassword(),
-                                user.getPhoneNumber()
-                        ),
-                        riderConcrete.getVehiclePlate()
-                ),
-                RiderDto.class
-        );
-
-        // create second rider
-        restTemplate.postForEntity(
-                "/api/riders",
-                new RiderDto(
-                        new UserDto(
-                                user2.getUsername(),
-                                user2.getEmail(),
-                                "",
-                                user2.getPassword(),
-                                user2.getPhoneNumber()
-                        ),
-                        riderConcrete2.getVehiclePlate()
-                ),
-                RiderDto.class
-        );
-
-        // make rider login
-        var login = new CustomerLoginDto(
-                riderConcrete.getUser().getUsername(),
-                riderConcrete.getUser().getEmail(),
-                riderConcrete.getUser().getPassword()
-        );
-
-        var responseToken = restTemplate.postForEntity(
-                "/api/riders/login", login, TokenDto.class
-        );
-
-        // make second rider login
-        var secondRiderLogin = new CustomerLoginDto(
-                riderConcrete2.getUser().getUsername(),
-                riderConcrete2.getUser().getEmail(),
-                riderConcrete2.getUser().getPassword()
-        );
-
-        var secondRiderResponseLogin = restTemplate.postForEntity(
-                "/api/riders/login", secondRiderLogin, TokenDto.class
-        );
-
-        // make customer login
-        var customerLogin = new CustomerLoginDto(
-                client.getUsername(),
-                null,
-                client.getPassword()
-        );
-
-        var customerLoginToken = restTemplate.postForEntity(
-                "/api/customer/signin", customerLogin, TokenDto.class
-        );
+        var userFromDB1 = userRepository.saveAndFlush(user);
+        var userFromDB2 = userRepository.saveAndFlush(user2);
+        var clientFromDB = userRepository.saveAndFlush(client);
+        riderRepository.saveAndFlush(riderConcrete);
+        riderRepository.saveAndFlush(riderConcrete2);
+        customerRepository.saveAndFlush(customer);
 
         // create a order
-
         var headers = new HttpHeaders();
         headers.set("username", client.getUsername());
-        headers.set("idToken", customerLoginToken.getBody().getToken());
+        headers.set("idToken", client.getAuthToken());
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        var response = restTemplate.postForEntity(
+        var orderResponse = restTemplate.postForEntity(
                 "/api/order",
                 new HttpEntity<>(new OrderCreateDto(
                         client.getUsername(),
@@ -665,22 +594,16 @@ class RiderController_RestTemplateIT {
                 OrderDto.class
         );
 
+
         // so the order was assigned to the rider
-        var riderHeaders = new HttpHeaders();
-        riderHeaders.set("username", riderConcrete.getUser().getUsername());
-        riderHeaders.set("idToken", responseToken.getBody().getToken());
-        riderHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        var riderResponse = restTemplate.exchange(
-                "/api/riders/order",
-                HttpMethod.GET,
-                new HttpEntity<>(riderHeaders),
-                OrderDto.class
-        );
-
         assertThat(
-                riderResponse.getBody()
-        ).extracting(OrderDto::getId).isNotNull();
+                this.ordersCache.riderHasNewAssignments(user.getUsername())
+        ).isTrue();
+
+        var riderHeaders = new HttpHeaders();
+        riderHeaders.set("username", user.getUsername());
+        riderHeaders.set("idToken", user.getAuthToken());
+        riderHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         // now, the rider declines the assignment
         var acceptAssignmentResponse = restTemplate.postForEntity(
@@ -693,26 +616,20 @@ class RiderController_RestTemplateIT {
                 acceptAssignmentResponse.getStatusCode()
         ).isEqualTo(HttpStatus.OK);
 
+
         // check if the order was assigned to the second rider
-        var secondRiderHeaders = new HttpHeaders();
-        secondRiderHeaders.set("username", riderConcrete2.getUser().getUsername());
-        secondRiderHeaders.set("idToken", secondRiderResponseLogin.getBody().getToken());
-        secondRiderHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        var secondRiderResponse = restTemplate.exchange(
-                "/api/riders/order",
-                HttpMethod.GET,
-                new HttpEntity<>(secondRiderHeaders),
-                OrderDto.class
-        );
+        assertThat(
+                this.ordersCache.riderHasNewAssignments(user.getUsername())
+        ).isFalse();
 
         assertThat(
-                secondRiderResponse.getStatusCode()
-        ).isEqualTo(HttpStatus.OK);
+                this.ordersCache.riderHasNewAssignments(user2.getUsername())
+        ).isTrue();
 
+        // check the id of the order
         assertThat(
-                secondRiderResponse.getBody()
-        ).extracting(OrderDto::getId).isNotNull();
+                this.ordersCache.retrieveAssignedOrder(user2.getUsername())
+        ).isEqualTo(orderResponse.getBody().getId());
     }
 
     @Test
