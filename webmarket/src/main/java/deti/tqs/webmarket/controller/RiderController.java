@@ -2,7 +2,6 @@ package deti.tqs.webmarket.controller;
 
 import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.repository.UserRepository;
-import deti.tqs.webmarket.model.Rider;
 import deti.tqs.webmarket.service.RiderServiceImp;
 import deti.tqs.webmarket.util.Utils;
 import lombok.extern.log4j.Log4j2;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @Log4j2
 @RestController
@@ -24,16 +22,27 @@ public class RiderController {
     private UserRepository userRepository;
 
     @PostMapping("")
-    public ResponseEntity<RiderDto> createRider(@RequestBody RiderDto riderDto) throws Exception {
+    public ResponseEntity<RiderDto> createRider(@RequestBody RiderDto riderDto) {
         log.info("Saving rider " + riderDto.getUser().getUsername() + ".");
         return new ResponseEntity<>(riderService.registerRider(riderDto), HttpStatus.CREATED);
     }
 
-
     @GetMapping("")
-    public List<Rider> getRiders(){
-        return riderService.getAllRiders();
+    public ResponseEntity<RiderFullInfoDto> getRider(@RequestHeader String username,
+                                                     @RequestHeader String idToken) {
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>(new RiderFullInfoDto(), HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>(new RiderFullInfoDto(), HttpStatus.UNAUTHORIZED);
+
+        return new ResponseEntity<>(
+                Utils.parseRiderDto(user.get().getRider()),
+                HttpStatus.OK
+        );
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@RequestBody CustomerLoginDto riderDto) {
@@ -129,22 +138,6 @@ public class RiderController {
     }
 
     // TODO post para atualizar localizaćão rider
-
-    @GetMapping("/info")
-    public ResponseEntity<RiderFullInfoDto> getRider(@RequestHeader String username,
-                             @RequestHeader String idToken) {
-        var user = userRepository.findByUsername(username);
-        if (user.isEmpty())
-            return new ResponseEntity<>(new RiderFullInfoDto(), HttpStatus.UNAUTHORIZED);
-
-        if (!idToken.equals(user.get().getAuthToken()))
-            return new ResponseEntity<>(new RiderFullInfoDto(), HttpStatus.UNAUTHORIZED);
-
-        return new ResponseEntity<>(
-                Utils.parseRiderDto(user.get().getRider()),
-                HttpStatus.OK
-        );
-    }
 
     // TODO update de dados do rider
 
