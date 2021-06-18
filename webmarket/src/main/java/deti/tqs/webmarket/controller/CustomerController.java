@@ -4,6 +4,7 @@ import deti.tqs.webmarket.dto.CustomerCreateDto;
 import deti.tqs.webmarket.dto.CustomerDto;
 import deti.tqs.webmarket.dto.CustomerLoginDto;
 import deti.tqs.webmarket.dto.TokenDto;
+import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.CustomerService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/customer")
 public class CustomerController {
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private CustomerService customerService;
@@ -42,7 +46,17 @@ public class CustomerController {
     }
 
     @PutMapping()
-    public ResponseEntity<CustomerDto> updateCustomer(@RequestBody CustomerCreateDto customerDto) {
+    public ResponseEntity<CustomerDto> updateCustomer(@RequestHeader String username,
+            @RequestHeader String idToken,
+            @RequestBody CustomerCreateDto customerDto) {
+
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>(new CustomerDto(), HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>(new CustomerDto(), HttpStatus.UNAUTHORIZED);
+
         log.info(String.format("Updating customer %s.", customerDto.getUsername()));
         var customer = new CustomerDto(
                 null,
@@ -79,5 +93,9 @@ public class CustomerController {
 
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
+
+    // TODO check status of orders
+
+    // TODO return orders of customer
 
 }

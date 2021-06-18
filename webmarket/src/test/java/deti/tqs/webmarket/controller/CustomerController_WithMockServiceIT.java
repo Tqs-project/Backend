@@ -4,6 +4,8 @@ import deti.tqs.webmarket.dto.CustomerCreateDto;
 import deti.tqs.webmarket.dto.CustomerDto;
 import deti.tqs.webmarket.dto.CustomerLoginDto;
 import deti.tqs.webmarket.dto.TokenDto;
+import deti.tqs.webmarket.model.User;
+import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.CustomerService;
 import deti.tqs.webmarket.util.JsonUtil;
 import org.hamcrest.CoreMatchers;
@@ -18,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,9 +37,13 @@ class CustomerController_WithMockServiceIT {
     @MockBean
     private CustomerService customerService;
 
+    @MockBean
+    private UserRepository userRepository;
+
     private CustomerDto customer;
     private CustomerDto customerResponse;
     private CustomerCreateDto customerCreate;
+    private User user;
 
     @BeforeEach
     void setUp() {
@@ -55,6 +62,15 @@ class CustomerController_WithMockServiceIT {
                 new ArrayList<>(),
                 new ArrayList<>()
         );
+
+        user = new User(
+                customerResponse.getUsername(),
+                customerResponse.getEmail(),
+                customerResponse.getRole(),
+                "password",
+                customerResponse.getPhoneNumber()
+        );
+        user.setAuthToken("token");
 
         customerCreate = new CustomerCreateDto();
         customerCreate.setUsername(customerResponse.getUsername());
@@ -106,8 +122,13 @@ class CustomerController_WithMockServiceIT {
         Mockito.when(customerService.updateCustomer(customer))
             .thenReturn(customerResponse);
 
+        Mockito.when(userRepository.findByUsername(customerCreate.getUsername()))
+                .thenReturn(Optional.of(user));
+
         mvc.perform(
                 put("/api/customer")
+                        .header("username", customer.getUsername())
+                        .header("idToken", "token")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.toJson(customerCreate))
         ).andExpect(status().isOk())

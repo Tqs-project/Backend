@@ -5,7 +5,6 @@ import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.RiderServiceImp;
 import deti.tqs.webmarket.util.Utils;
 import lombok.extern.log4j.Log4j2;
-import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
