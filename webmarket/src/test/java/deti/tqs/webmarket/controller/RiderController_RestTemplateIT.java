@@ -78,6 +78,7 @@ class RiderController_RestTemplateIT {
     }
 
     @Test
+    @org.junit.jupiter.api.Order(2)
     void updateOrderDelivered() {
         var user = new User(
                 "Albert",
@@ -169,6 +170,7 @@ class RiderController_RestTemplateIT {
     }
 
     @Test
+    @org.junit.jupiter.api.Order(3)
     void whenCreateRiderIsValid_thenCreateRider() {
         ResponseEntity<RiderDto> response = restTemplate.postForEntity(
                 "/api/riders", rider, RiderDto.class
@@ -185,6 +187,7 @@ class RiderController_RestTemplateIT {
     }
 
     @Test
+    @org.junit.jupiter.api.Order(4)
     void whenRiderMakesLogin_thenTheTokenShouldBePersistedOnDB() {
         ResponseEntity<RiderDto> response = restTemplate.postForEntity(
                 "/api/riders", rider, RiderDto.class
@@ -210,6 +213,7 @@ class RiderController_RestTemplateIT {
     }
 
     @Test
+    @org.junit.jupiter.api.Order(5)
     void assignOrderToRiderTest() {
         var user = new User(
                 "Albert",
@@ -361,6 +365,7 @@ class RiderController_RestTemplateIT {
     }
 
     @Test
+    @org.junit.jupiter.api.Order(6)
     void riderAcceptsAssignedOrderTest() {
         var user = new User(
                 "Albert",
@@ -520,8 +525,8 @@ class RiderController_RestTemplateIT {
         ).hasSize(1).extracting(Rider::getBusy).containsOnly(true);
     }
 
-    @Disabled
     @Test
+    @org.junit.jupiter.api.Order(1)
     void riderDeclinesAssignedOrderTest() {
         var token = "token_secret";
         var user = new User(
@@ -635,6 +640,7 @@ class RiderController_RestTemplateIT {
     }
 
     @Test
+    @org.junit.jupiter.api.Order(7)
     void updateRiderLocationTest() {
         var user = new User(
             "Pablo",
@@ -690,6 +696,7 @@ class RiderController_RestTemplateIT {
     }
 
     @Test
+    @org.junit.jupiter.api.Order(8)
     void getInfoRiderTest() {
         var user = new User(
                 "Pablo",
