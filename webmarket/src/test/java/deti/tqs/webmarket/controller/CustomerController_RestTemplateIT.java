@@ -248,4 +248,63 @@ class CustomerController_RestTemplateIT {
         ).extracting(OrderDto::getUsername)
                 .isEqualTo(customer.getUsername());
     }
+
+    @Test
+    void getAllCustomerOrdersTest() {
+        var user = new User(
+                customer.getUsername(),
+                customer.getEmail(),
+                "CUSTOMER",
+                customer.getPassword(),
+                customer.getPhoneNumber()
+        );
+        var customerConcrete = new Customer(
+                user,
+                customer.getAddress(),
+                customer.getDescription(),
+                customer.getTypeOfService(),
+                customer.getIban()
+        );
+        user.setCustomer(customerConcrete);
+        user.setAuthToken("token");
+
+        userRepository.saveAndFlush(user);
+        customerRepository.saveAndFlush(customerConcrete);
+
+        var order1 = new Order(
+                "PAYPAL",
+                2.34,
+                customerConcrete,
+                "Candy Shop Center"
+        );
+        var order2 = new Order(
+                "PAYPAL",
+                3.12,
+                customerConcrete,
+                "I dont know"
+        );
+        orderRepository.save(order1);
+        orderRepository.saveAndFlush(order2);
+
+        var headers = new HttpHeaders();
+        headers.set("username", user.getUsername());
+        headers.set("idToken", "token");
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        var response = restTemplate.exchange(
+                "/api/customer/orders",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                OrderDto[].class
+        );
+
+        assertThat(
+                response.getStatusCode()
+        ).isEqualTo(HttpStatus.OK);
+
+        assertThat(
+                response.getBody()
+        ).hasSize(2).extracting(OrderDto::getLocation)
+                .containsExactly("Candy Shop Center", "I dont know");
+    }
 }

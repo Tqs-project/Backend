@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -134,7 +135,13 @@ public class CustomerServiceImp implements CustomerService{
 
     @Override
     public List<OrderDto> getAllCustomerOrders(String username) {
-        //var orders = orderRepository.findBy;
-        return null;
+        var orders = orderRepository.findOrdersByCustomer_User_Username(username);
+
+        var ret = new ArrayList<OrderDto>();
+
+        orders.forEach(
+                order -> ret.add(Utils.parseOrderDto(order))
+        );
+        return ret;
     }
 }
