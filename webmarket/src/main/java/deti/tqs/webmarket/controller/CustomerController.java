@@ -6,6 +6,7 @@ import deti.tqs.webmarket.dto.CustomerLoginDto;
 import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.CustomerService;
+import deti.tqs.webmarket.util.Utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -75,6 +76,23 @@ public class CustomerController {
         );
         return new ResponseEntity<>(this.customerService.updateCustomer(customer),
                 HttpStatus.OK);
+    }
+
+    @GetMapping()
+    public ResponseEntity<CustomerDto> getCustomerInformation(@RequestHeader String username,
+                                                              @RequestHeader String idToken) {
+
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>(new CustomerDto(), HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>(new CustomerDto(), HttpStatus.UNAUTHORIZED);
+
+        return new ResponseEntity<>(
+                Utils.parseCustomerDto(user.get().getCustomer()),
+                HttpStatus.OK
+        );
     }
 
     @PostMapping("/signin")

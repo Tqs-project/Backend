@@ -54,8 +54,6 @@ class CustomerController_RestTemplateIT {
         customer.setIban("PT50000201231234567890155");
     }
 
-    // assertThat(response.getBody()).extracting(class::getName).containsExactly("", "");
-
     @AfterEach
     void tearDown() {
         customerRepository.deleteAll();
@@ -114,6 +112,50 @@ class CustomerController_RestTemplateIT {
         assertThat(foundCustomer.getDescription()).isEqualTo(
                 customer.getDescription()
         );
+    }
+
+    @Test
+    void getCustomerInformationTest() {
+        var user = new User(
+                customer.getUsername(),
+                customer.getEmail(),
+                "CUSTOMER",
+                customer.getPassword(),
+                customer.getPhoneNumber()
+        );
+        var customerConcrete = new Customer(
+                user,
+                customer.getAddress(),
+                customer.getDescription(),
+                customer.getTypeOfService(),
+                customer.getIban()
+        );
+        user.setCustomer(customerConcrete);
+        user.setAuthToken("token");
+
+        userRepository.saveAndFlush(user);
+        customerRepository.saveAndFlush(customerConcrete);
+
+        var headers = new HttpHeaders();
+        headers.set("username", customer.getUsername());
+        headers.set("idToken", "token");
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        var response = restTemplate.exchange(
+                "/api/customer",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                CustomerDto.class
+        );
+
+        assertThat(
+                response.getStatusCode()
+        ).isEqualTo(HttpStatus.OK);
+
+        assertThat(
+                response.getBody()
+        ).extracting(CustomerDto::getUsername)
+                .isEqualTo(customer.getUsername());
     }
 
     @Test
