@@ -146,7 +146,7 @@ public class CustomerController {
         );
     }
 
-    @GetMapping("/delivery")
+    @GetMapping("/deliveryprice")
     public ResponseEntity<PriceEstimationDto> getPriceForDelivery(@RequestHeader String username,
                                                                   @RequestHeader String idToken,
                                                                   @RequestParam String destination) {
@@ -156,6 +156,8 @@ public class CustomerController {
 
         if (!idToken.equals(user.get().getAuthToken()))
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        log.info("Getting price for delivery to " + destination);
 
         return new ResponseEntity<>(
                 this.customerService.getPriceForDelivery(user.get().getId(), destination),

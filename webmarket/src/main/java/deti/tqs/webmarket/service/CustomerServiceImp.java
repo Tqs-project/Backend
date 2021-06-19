@@ -13,6 +13,7 @@ import deti.tqs.webmarket.repository.OrderRepository;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.util.Utils;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.math3.util.Precision;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -168,7 +169,7 @@ public class CustomerServiceImp implements CustomerService {
 
         var rideInfo = response.rows[0].elements[0];
 
-        var cost = COST_PER_METER * rideInfo.distance.inMeters;
+        var cost = Precision.round(COST_PER_METER * rideInfo.distance.inMeters, 2);
         return new PriceEstimationDto(
                 response.originAddresses[0],
                 response.destinationAddresses[0],
