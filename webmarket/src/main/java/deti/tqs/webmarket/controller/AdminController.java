@@ -2,14 +2,12 @@ package deti.tqs.webmarket.controller;
 
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.AdminService;
+import deti.tqs.webmarket.service.LoginService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Queue;
@@ -20,14 +18,21 @@ import java.util.Queue;
 public class AdminController {
 
     @Autowired
-    private UserRepository userRepository;
+    private LoginService loginService;
 
     @Autowired
     private AdminService adminService;
 
+    
+
     @GetMapping("/orderscache/assignments")
-    public ResponseEntity<Map<String, Long>> getCurrentAssignments() {
-        // TODO authentication
+    public ResponseEntity<Map<String, Long>> getCurrentAssignments(
+            @RequestHeader String username,
+            @RequestHeader String idToken
+    ) {
+        if (!loginService.checkLoginCredentials(username, idToken))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         return new ResponseEntity<>(
                 this.adminService.getCurrentAssignments(),
                 HttpStatus.OK
@@ -35,7 +40,13 @@ public class AdminController {
     }
 
     @GetMapping("/orderscache/waitingqueue")
-    public ResponseEntity<Queue<Long>> getWaitingQueueOrders() {
+    public ResponseEntity<Queue<Long>> getWaitingQueueOrders(
+            @RequestHeader String username,
+            @RequestHeader String idToken
+    ) {
+        if (!loginService.checkLoginCredentials(username, idToken))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         return new ResponseEntity<>(
                 this.adminService.getWaitingOrdersAssignment(),
                 HttpStatus.OK
@@ -43,7 +54,11 @@ public class AdminController {
     }
 
     @PostMapping("/orderscache/reset")
-    public void resetOrdersCache() {
-        this.adminService.resetOrdersCache();
+    public void resetOrdersCache(
+            @RequestHeader String username,
+            @RequestHeader String idToken
+    ) {
+        if (loginService.checkLoginCredentials(username, idToken))
+            this.adminService.resetOrdersCache();
     }
 }
