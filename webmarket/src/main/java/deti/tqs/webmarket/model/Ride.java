@@ -21,8 +21,6 @@ public class Ride {
 
     private String destination;
 
-    //private Double tripDistance;
-
     // starts when the rider accepts the order
     private Timestamp timestampInit;
 

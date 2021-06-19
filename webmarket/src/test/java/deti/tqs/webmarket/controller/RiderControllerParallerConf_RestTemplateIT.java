@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Log4j2
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application-integrationtest.properties")
-public class RiderControllerParallerConf_RestTemplateIT {
+class RiderControllerParallerConf_RestTemplateIT {
 
     @LocalServerPort
     int randomServerPort;

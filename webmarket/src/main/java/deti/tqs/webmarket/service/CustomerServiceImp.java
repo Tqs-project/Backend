@@ -47,7 +47,7 @@ public class CustomerServiceImp implements CustomerService {
 
     private final SecureRandom rand = new SecureRandom();
 
-    private final double COST_PER_METER = 0.00067;
+    private final static double COST_PER_METER = 0.00067;
 
     @Override
     public CustomerDto createCustomer(CustomerDto customerDto) {
