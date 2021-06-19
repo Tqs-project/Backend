@@ -1,5 +1,7 @@
 package deti.tqs.webmarket.controller;
 
+import deti.tqs.webmarket.dto.CustomerDto;
+import deti.tqs.webmarket.dto.OrderDto;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.AdminService;
 import deti.tqs.webmarket.service.LoginService;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
@@ -23,7 +26,33 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
-    
+    @GetMapping("/customers")
+    public ResponseEntity<List<CustomerDto>> getCustomers(
+            @RequestHeader String username,
+            @RequestHeader String idToken
+    ) {
+        if (!loginService.checkLoginCredentials(username, idToken))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        return new ResponseEntity<>(
+                this.adminService.getCustomers(),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<List<OrderDto>> getOrders(
+            @RequestHeader String username,
+            @RequestHeader String idToken
+    ) {
+        if (!loginService.checkLoginCredentials(username, idToken))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        return new ResponseEntity<>(
+                this.adminService.getOrders(),
+                HttpStatus.OK
+        );
+    }
 
     @GetMapping("/orderscache/assignments")
     public ResponseEntity<Map<String, Long>> getCurrentAssignments(

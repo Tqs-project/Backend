@@ -42,6 +42,7 @@ public class Utils {
                 customer.getUser().getRole(),
                 "",
                 customer.getUser().getPhoneNumber(),
+                customer.getUser().getJoinedDate(),
                 customer.getAddress(),
                 customer.getDescription(),
                 customer.getImageUrl(),

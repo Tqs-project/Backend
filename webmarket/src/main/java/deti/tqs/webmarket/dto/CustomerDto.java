@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
 import java.util.List;
 
 @Data
@@ -22,6 +23,8 @@ public class CustomerDto {
     private String password;
 
     private String phoneNumber;
+
+    private Date joinedAt;
 
     private String address;
 

@@ -54,6 +54,7 @@ class CustomerController_WithMockServiceIT {
                 "CUSTOMER",
                 "",
                 "935111111",
+                null,
                 "Front Street",
                 "Wonderful coffee shop",
                 null,
