@@ -2,11 +2,14 @@ package deti.tqs.webmarket.controller;
 
 import deti.tqs.webmarket.dto.CustomerDto;
 import deti.tqs.webmarket.dto.OrderDto;
+import deti.tqs.webmarket.dto.RiderFullInfoDto;
 import deti.tqs.webmarket.model.Customer;
 import deti.tqs.webmarket.model.Order;
+import deti.tqs.webmarket.model.Rider;
 import deti.tqs.webmarket.model.User;
 import deti.tqs.webmarket.repository.CustomerRepository;
 import deti.tqs.webmarket.repository.OrderRepository;
+import deti.tqs.webmarket.repository.RiderRepository;
 import deti.tqs.webmarket.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +43,9 @@ class AdminController_RestTemplateIT {
     private CustomerRepository customerRepository;
 
     @Autowired
+    private RiderRepository riderRepository;
+
+    @Autowired
     private OrderRepository orderRepository;
 
     @Autowired
@@ -63,6 +69,7 @@ class AdminController_RestTemplateIT {
     @AfterEach
     void tearDown() {
         orderRepository.deleteAll();
+        riderRepository.deleteAll();
         customerRepository.deleteAll();
         userRepository.deleteAll();
         ordersCache.deleteAllOrders();
@@ -242,6 +249,61 @@ class AdminController_RestTemplateIT {
         ).hasSize(2).extracting(OrderDto::getCost)
                 .containsExactly(2.11, 3.11);
 
+    }
+
+    @Test
+    void getRidersTest() {
+        var user1 = new User(
+                "Pepe",
+                "cabecadas@mail.com",
+                "CUSTOMER",
+                "password",
+                "999999999"
+        );
+        var rider1 = new Rider(
+                user1,
+                "plate1"
+        );
+        user1.setRider(rider1);
+
+        var user2 = new User(
+                "Rui Patrício",
+                "ruizao@mail.com",
+                "CUSTOMER",
+                "password",
+                "999999999"
+        );
+        var rider2 = new Rider(
+                user2,
+                "plate2"
+        );
+        user2.setRider(rider2);
+
+        userRepository.save(user1);
+        userRepository.saveAndFlush(user2);
+        riderRepository.save(rider1);
+        riderRepository.saveAndFlush(rider2);
+
+        var headers = new HttpHeaders();
+        headers.set("username", "Ronaldo");
+        headers.set("idToken", "token");
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        var response = restTemplate.exchange(
+                "/api/admin/riders",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                RiderFullInfoDto[].class
+        );
+
+        assertThat(
+                response.getStatusCode()
+        ).isEqualTo(HttpStatus.OK);
+
+        assertThat(
+                response.getBody()
+        ).hasSize(2).extracting(RiderFullInfoDto::getUsername)
+                .containsExactly("Pepe", "Rui Patrício");
     }
 
 }

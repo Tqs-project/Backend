@@ -3,8 +3,10 @@ package deti.tqs.webmarket.service;
 import deti.tqs.webmarket.cache.OrdersCache;
 import deti.tqs.webmarket.dto.CustomerDto;
 import deti.tqs.webmarket.dto.OrderDto;
+import deti.tqs.webmarket.dto.RiderFullInfoDto;
 import deti.tqs.webmarket.repository.CustomerRepository;
 import deti.tqs.webmarket.repository.OrderRepository;
+import deti.tqs.webmarket.repository.RiderRepository;
 import deti.tqs.webmarket.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,9 @@ public class AdminServiceImp implements AdminService{
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private RiderRepository riderRepository;
 
     @Override
     public Map<String, Long> getCurrentAssignments() {
@@ -60,6 +65,18 @@ public class AdminServiceImp implements AdminService{
         orderRepository.findAll().forEach(
                 order -> ret.add(
                         Utils.parseOrderDto(order)
+                )
+        );
+        return ret;
+    }
+
+    @Override
+    public List<RiderFullInfoDto> getRiders() {
+        var ret = new ArrayList<RiderFullInfoDto>();
+
+        riderRepository.findAll().forEach(
+                rider -> ret.add(
+                        Utils.parseRiderDto(rider)
                 )
         );
         return ret;

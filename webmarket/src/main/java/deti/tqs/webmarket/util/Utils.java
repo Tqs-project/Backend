@@ -85,6 +85,7 @@ public class Utils {
                 rider.getUser().getEmail(),
                 rider.getUser().getRole(),
                 rider.getUser().getPhoneNumber(),
+                rider.getUser().getJoinedDate(),
                 rider.getVehiclePlate(),
                 comments,
                 rider.getLat(),

@@ -2,6 +2,7 @@ package deti.tqs.webmarket.controller;
 
 import deti.tqs.webmarket.dto.CustomerDto;
 import deti.tqs.webmarket.dto.OrderDto;
+import deti.tqs.webmarket.dto.RiderFullInfoDto;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.AdminService;
 import deti.tqs.webmarket.service.LoginService;
@@ -53,6 +54,24 @@ public class AdminController {
                 HttpStatus.OK
         );
     }
+
+    @GetMapping("/riders")
+    public ResponseEntity<List<RiderFullInfoDto>> getRiders(
+            @RequestHeader String username,
+            @RequestHeader String idToken
+    ) {
+        if (!loginService.checkLoginCredentials(username, idToken))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        return new ResponseEntity<>(
+                this.adminService.getRiders(),
+                HttpStatus.OK
+        );
+    }
+
+    
+
+    // TODO login e logout
 
     @GetMapping("/orderscache/assignments")
     public ResponseEntity<Map<String, Long>> getCurrentAssignments(
