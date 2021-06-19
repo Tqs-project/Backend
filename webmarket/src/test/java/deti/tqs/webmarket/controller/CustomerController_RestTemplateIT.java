@@ -307,4 +307,55 @@ class CustomerController_RestTemplateIT {
         ).hasSize(2).extracting(OrderDto::getLocation)
                 .containsExactly("Candy Shop Center", "I dont know");
     }
+
+    @Test
+    void returnPriceOfOrderTest() {
+        var user = new User(
+                customer.getUsername(),
+                customer.getEmail(),
+                "CUSTOMER",
+                customer.getPassword(),
+                customer.getPhoneNumber()
+        );
+        var customerConcrete = new Customer(
+                user,
+                "Porto, Portugal",
+                customer.getDescription(),
+                customer.getTypeOfService(),
+                customer.getIban()
+        );
+        user.setCustomer(customerConcrete);
+        user.setAuthToken("token");
+
+        userRepository.saveAndFlush(user);
+        customerRepository.saveAndFlush(customerConcrete);
+
+        var headers = new HttpHeaders();
+        headers.set("username", user.getUsername());
+        headers.set("idToken", user.getAuthToken());
+
+        var destination = "Lisboa, Portugal";
+
+        var response = restTemplate.exchange(
+                "/api/customer/deliveryprice?destination=" + destination,
+                HttpMethod.GET,
+                    new HttpEntity<>(headers),
+                PriceEstimationDto.class
+        );
+
+        assertThat(
+                response.getStatusCode()
+        ).isEqualTo(HttpStatus.OK);
+
+        assertThat(
+                response.getBody()
+        ).extracting(PriceEstimationDto::getOrigin)
+                .isEqualTo("Porto, Portugal");
+
+        assertThat(
+                response.getBody()
+        ).extracting(PriceEstimationDto::getDistanceM)
+                .isEqualTo(313413L);
+
+    }
 }
