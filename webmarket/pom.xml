@@ -71,6 +71,11 @@
 		<!-- End testing dependencies -->
 
 		<!-- Other dependencies -->
+		<dependency>
+			<groupId>com.google.maps</groupId>
+			<artifactId>google-maps-services</artifactId>
+			<version>0.18.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springdoc</groupId>

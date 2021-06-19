@@ -130,7 +130,6 @@ public class CustomerController {
                 HttpStatus.OK);
     }
 
-    // TODO return orders of customer
     @GetMapping("/orders")
     public ResponseEntity<List<OrderDto>> getCustomerOrders(@RequestHeader String username,
                                                             @RequestHeader String idToken) {
@@ -146,4 +145,22 @@ public class CustomerController {
                 HttpStatus.OK
         );
     }
+
+    @GetMapping("/delivery")
+    public ResponseEntity<PriceEstimationDto> getPriceForDelivery(@RequestHeader String username,
+                                                                  @RequestHeader String idToken,
+                                                                  @RequestParam String destination) {
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        if (!idToken.equals(user.get().getAuthToken()))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        return new ResponseEntity<>(
+                this.customerService.getPriceForDelivery(user.get().getId(), destination),
+                HttpStatus.OK
+        );
+    }
+
 }

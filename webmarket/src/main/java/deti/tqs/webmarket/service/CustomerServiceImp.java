@@ -1,7 +1,9 @@
 package deti.tqs.webmarket.service;
 
+import deti.tqs.webmarket.api.DistanceAPI;
 import deti.tqs.webmarket.dto.CustomerDto;
 import deti.tqs.webmarket.dto.OrderDto;
+import deti.tqs.webmarket.dto.PriceEstimationDto;
 import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.model.Customer;
 import deti.tqs.webmarket.model.Order;
@@ -25,7 +27,7 @@ import java.util.Optional;
 @Log4j2
 @Service
 @Transactional
-public class CustomerServiceImp implements CustomerService{
+public class CustomerServiceImp implements CustomerService {
 
     @Autowired
     private UserRepository userRepository;
@@ -37,9 +39,14 @@ public class CustomerServiceImp implements CustomerService{
     private OrderRepository orderRepository;
 
     @Autowired
+    private DistanceAPI distanceAPI;
+
+    @Autowired
     private PasswordEncoder encoder;
 
     private final SecureRandom rand = new SecureRandom();
+
+    private final double COST_PER_METER = 0.00067;
 
     @Override
     public CustomerDto createCustomer(CustomerDto customerDto) {
@@ -143,5 +150,32 @@ public class CustomerServiceImp implements CustomerService{
                 order -> ret.add(Utils.parseOrderDto(order))
         );
         return ret;
+    }
+
+    @Override
+    public PriceEstimationDto getPriceForDelivery(Long customerId, String destination) {
+        var customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new EntityNotFoundException("Customer not found with id: " + customerId)
+        );
+
+        var response = distanceAPI.getDistance(
+                new String[] { customer.getAddress() },
+                new String[] { destination }
+        );
+
+        if (response == null)
+            return new PriceEstimationDto();
+
+        var rideInfo = response.rows[0].elements[0];
+
+        var cost = COST_PER_METER * rideInfo.distance.inMeters;
+        return new PriceEstimationDto(
+                response.originAddresses[0],
+                response.destinationAddresses[0],
+                rideInfo.duration.humanReadable,
+                rideInfo.distance.inMeters,
+                rideInfo.distance.humanReadable,
+                cost
+        );
     }
 }
