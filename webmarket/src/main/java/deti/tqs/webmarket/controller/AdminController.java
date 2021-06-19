@@ -3,6 +3,7 @@ package deti.tqs.webmarket.controller;
 import deti.tqs.webmarket.dto.CustomerDto;
 import deti.tqs.webmarket.dto.OrderDto;
 import deti.tqs.webmarket.dto.RiderFullInfoDto;
+import deti.tqs.webmarket.dto.TokenDto;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.AdminService;
 import deti.tqs.webmarket.service.LoginService;
@@ -69,7 +70,12 @@ public class AdminController {
         );
     }
 
-    
+    @PostMapping("/login")
+    public ResponseEntity<TokenDto> login(
+
+    ) {
+
+    }
 
     // TODO login e logout
 
