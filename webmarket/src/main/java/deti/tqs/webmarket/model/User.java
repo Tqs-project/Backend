@@ -7,6 +7,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
+import java.sql.Date;
 
 @Data
 @Entity
@@ -34,6 +35,8 @@ public class User {
     @Column(length = 9)
     private String phoneNumber;
 
+    private Date joinedDate;
+
     // riders and customers
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn
@@ -58,5 +61,7 @@ public class User {
         this.role = role;
         this.password = password;
         this.phoneNumber = phoneNumber;
+
+        this.joinedDate = new Date(System.currentTimeMillis());
     }
 }

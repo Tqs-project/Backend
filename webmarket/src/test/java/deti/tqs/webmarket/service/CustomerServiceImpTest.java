@@ -56,6 +56,7 @@ class CustomerServiceImpTest {
                 "CUSTOMER",
                 "",
                 "935111111",
+                null,
                 "Front Street",
                 "Wonderful coffee shop",
                 null,
@@ -126,7 +127,9 @@ class CustomerServiceImpTest {
                 customerFromDb
         );
 
-        assertThat(customerService.createCustomer(customerCreateDto)).isEqualTo(
+        var response = customerService.createCustomer(customerCreateDto);
+        response.setJoinedAt(null);
+        assertThat(response).isEqualTo(
                 customerCreateDtoRet
         );
     }
@@ -151,7 +154,9 @@ class CustomerServiceImpTest {
                 customerFromDb
         );
 
-        assertThat(customerService.updateCustomer(customerCreateDto)).isEqualTo(
+        var response = customerService.updateCustomer(customerCreateDto);
+        response.setJoinedAt(null);
+        assertThat(response).isEqualTo(
                 customerCreateDtoRet
         );
     }
