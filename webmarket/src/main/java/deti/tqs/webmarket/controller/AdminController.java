@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Queue;
 
 @Log4j2
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
