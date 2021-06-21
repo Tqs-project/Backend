@@ -101,33 +101,6 @@ class AdminController_RestTemplateIT {
     }
 
     @Test
-    void getWaitingQueueOrders() {
-        var username = "Ronaldo";
-        var orderId = 10L;
-        ordersCache.addOrderToQueue(orderId);
-
-        var headers = new HttpHeaders();
-        headers.set("username", username);
-        headers.set("idToken", "token");
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        var response = restTemplate.exchange(
-                "/api/admin/orderscache/waitingqueue",
-                HttpMethod.GET,
-                new HttpEntity<>(headers),
-                List.class
-        );
-
-        assertThat(
-                response.getStatusCode()
-        ).isEqualTo(HttpStatus.OK);
-
-        assertThat(
-                response.getBody()
-        ).hasSize(1).containsOnly(10);
-    }
-
-    @Test
     void getCustomersTest() {
         var user1 = new User(
                 "Pepe",
