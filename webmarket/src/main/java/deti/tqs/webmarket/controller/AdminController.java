@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Queue;
 
 @Log4j2
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200","https://wedeliveradmin.herokuapp.com"})
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
