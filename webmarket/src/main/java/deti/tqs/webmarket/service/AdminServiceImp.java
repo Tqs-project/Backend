@@ -1,21 +1,22 @@
 package deti.tqs.webmarket.service;
 
 import deti.tqs.webmarket.cache.OrdersCache;
-import deti.tqs.webmarket.dto.CustomerDto;
-import deti.tqs.webmarket.dto.OrderDto;
-import deti.tqs.webmarket.dto.RiderFullInfoDto;
+import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.repository.CustomerRepository;
 import deti.tqs.webmarket.repository.OrderRepository;
 import deti.tqs.webmarket.repository.RiderRepository;
+import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.util.Utils;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import javax.persistence.EntityNotFoundException;
+import java.security.SecureRandom;
+import java.util.*;
 
+@Log4j2
 @Service
 public class AdminServiceImp implements AdminService{
 
@@ -30,6 +31,14 @@ public class AdminServiceImp implements AdminService{
 
     @Autowired
     private RiderRepository riderRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder encoder;
+
+    private final SecureRandom rand = new SecureRandom();
 
     @Override
     public Map<String, Long> getCurrentAssignments() {
@@ -80,5 +89,40 @@ public class AdminServiceImp implements AdminService{
                 )
         );
         return ret;
+    }
+
+    @Override
+    public TokenDto login(CustomerLoginDto loginParams) {
+        var user = this.userRepository.findByUsername(
+                loginParams.getUsername()).orElseThrow(
+                () -> new EntityNotFoundException(
+                        "User not found with username: " + loginParams.getUsername()
+                )
+        );
+        log.info(loginParams);
+        log.info(user);
+
+        if (loginParams.getPassword().equals(user.getPassword())) {
+            var token = this.encoder.encode(String.valueOf(rand.nextDouble()));
+
+            user.setAuthToken(token);
+            this.userRepository.saveAndFlush(user);
+
+            return new TokenDto(token, "");
+        }
+        return new TokenDto("", "Bad authentication parameters");
+    }
+
+    @Override
+    public void logout(String username) {
+        var user = this.userRepository.findByUsername(
+                username).orElseThrow(
+                () -> new EntityNotFoundException(
+                        "User not found with username: " + username
+                )
+        );
+
+        user.setAuthToken(null);
+        this.userRepository.saveAndFlush(user);
     }
 }

@@ -1,8 +1,6 @@
 package deti.tqs.webmarket.controller;
 
-import deti.tqs.webmarket.dto.CustomerDto;
-import deti.tqs.webmarket.dto.OrderDto;
-import deti.tqs.webmarket.dto.RiderFullInfoDto;
+import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.model.Customer;
 import deti.tqs.webmarket.model.Order;
 import deti.tqs.webmarket.model.Rider;
@@ -55,7 +53,7 @@ class AdminController_RestTemplateIT {
 
     @BeforeEach
     void setUp() {
-        var user = new User(
+        user = new User(
                 "Ronaldo",
                 "ronaldo@mail.com",
                 "ADMIN",
@@ -304,6 +302,63 @@ class AdminController_RestTemplateIT {
                 response.getBody()
         ).hasSize(2).extracting(RiderFullInfoDto::getUsername)
                 .containsExactly("Pepe", "Rui Patrício");
+    }
+
+    @Test
+    void makeLoginTest() {
+        var body = new CustomerLoginDto(
+                user.getUsername(),
+                null,
+                user.getPassword()
+        );
+
+        var response = restTemplate.postForEntity(
+                "/api/admin/login",
+                body,
+                TokenDto.class
+        );
+
+        assertThat(
+                response.getStatusCode()
+        ).isEqualTo(HttpStatus.ACCEPTED);
+
+        assertThat(
+                response.getBody()
+        ).extracting(TokenDto::getToken).isNotNull();
+
+        var ronaldo = userRepository.findByUsername(user.getUsername());
+
+        assertThat(
+                ronaldo
+        ).isPresent();
+
+        assertThat(
+                ronaldo.get().getAuthToken()
+        ).isEqualTo(response.getBody().getToken());
+    }
+
+    @Test
+    void makeLogoutTest() {
+        var headers = new HttpHeaders();
+        headers.set("username", user.getUsername());
+        var response = restTemplate.postForEntity(
+                "/api/admin/logout",
+                new HttpEntity<>(headers),
+                String.class
+        );
+
+        assertThat(
+                response.getStatusCode()
+        ).isEqualTo(HttpStatus.OK);
+
+        assertThat(
+                response.getBody()
+        ).isEqualTo("Bye bye");
+
+        var found = userRepository.findByUsername(user.getUsername());
+        assertThat(
+                found.get()
+        ).extracting(User::getAuthToken).isNull();
     }
 
 }

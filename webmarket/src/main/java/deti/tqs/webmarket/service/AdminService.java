@@ -1,8 +1,6 @@
 package deti.tqs.webmarket.service;
 
-import deti.tqs.webmarket.dto.CustomerDto;
-import deti.tqs.webmarket.dto.OrderDto;
-import deti.tqs.webmarket.dto.RiderFullInfoDto;
+import deti.tqs.webmarket.dto.*;
 
 import java.util.List;
 import java.util.Map;
@@ -16,4 +14,7 @@ public interface AdminService {
     List<CustomerDto> getCustomers();
     List<OrderDto> getOrders();
     List<RiderFullInfoDto> getRiders();
+
+    TokenDto login(CustomerLoginDto loginParams);
+    void logout(String username);
 }

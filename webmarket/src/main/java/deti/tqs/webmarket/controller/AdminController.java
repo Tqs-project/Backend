@@ -1,9 +1,6 @@
 package deti.tqs.webmarket.controller;
 
-import deti.tqs.webmarket.dto.CustomerDto;
-import deti.tqs.webmarket.dto.OrderDto;
-import deti.tqs.webmarket.dto.RiderFullInfoDto;
-import deti.tqs.webmarket.dto.TokenDto;
+import deti.tqs.webmarket.dto.*;
 import deti.tqs.webmarket.repository.UserRepository;
 import deti.tqs.webmarket.service.AdminService;
 import deti.tqs.webmarket.service.LoginService;
@@ -72,9 +69,25 @@ public class AdminController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(
-
+        @RequestBody CustomerLoginDto adminDto
     ) {
 
+        var response = this.adminService.login(adminDto);
+        log.info(response);
+
+        if (response.isEmpty())
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(
+            @RequestHeader String username
+    ) {
+        this.adminService.logout(username);
+
+        return new ResponseEntity<>("Bye bye", HttpStatus.OK);
     }
 
     // TODO login e logout
