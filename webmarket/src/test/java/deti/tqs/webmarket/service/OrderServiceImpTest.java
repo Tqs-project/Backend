@@ -3,6 +3,7 @@ package deti.tqs.webmarket.service;
 import deti.tqs.webmarket.cache.OrdersCache;
 import deti.tqs.webmarket.dto.CustomerDto;
 import deti.tqs.webmarket.dto.OrderDto;
+import deti.tqs.webmarket.dto.PriceEstimationDto;
 import deti.tqs.webmarket.model.Customer;
 import deti.tqs.webmarket.model.Order;
 import deti.tqs.webmarket.model.Rider;
@@ -39,6 +40,9 @@ class OrderServiceImpTest {
 
     @Mock(lenient = true)
     private OrdersCache ordersCache;
+
+    @Mock
+    private CustomerService customerService;
 
     @InjectMocks
     private OrderServiceImp orderServiceImp;
@@ -136,6 +140,13 @@ class OrderServiceImpTest {
     void createOrder_AddToDB_Test() {
         Mockito.when(userRepository.findByUsername("Maria")).thenReturn(java.util.Optional.ofNullable(user));
         Mockito.when(orderRepository.save(Mockito.any(Order.class))).thenReturn(orderFromDB);
+
+        var priceEstimation = new PriceEstimationDto();
+        priceEstimation.setDeliveryPrice(orderCreateDto.getCost());
+
+        Mockito.when(
+                customerService.getPriceForDelivery(orderCreateDtoRet.getCustomerId(), orderCreateDto.getLocation())
+        ).thenReturn(priceEstimation);
 
         var res = orderServiceImp.createOrder(orderCreateDto);
         res.setOrderTimestamp(null);

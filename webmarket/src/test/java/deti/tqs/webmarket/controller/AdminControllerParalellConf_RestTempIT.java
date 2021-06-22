@@ -48,6 +48,7 @@ public class AdminControllerParalellConf_RestTempIT {
 
     @BeforeEach
     void setUp() {
+        ordersCache.deleteAllOrders();
         user = new User(
                 "Ronaldo",
                 "ronaldo@mail.com",
