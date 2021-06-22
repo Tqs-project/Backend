@@ -1,5 +1,6 @@
 package deti.tqs.webmarket.service;
 
+import deti.tqs.webmarket.api.DistanceAPI;
 import deti.tqs.webmarket.cache.OrdersCache;
 import deti.tqs.webmarket.dto.OrderDto;
 import deti.tqs.webmarket.model.Order;
@@ -33,6 +34,9 @@ public class OrderServiceImp implements OrderService {
     @Autowired
     private OrdersCache ordersCache;
 
+    @Autowired
+    private CustomerService customerService;
+
     @Override
     public OrderDto createOrder(OrderDto orderDto){
         var user = this.userRepository.findByUsername(orderDto.getUsername()).orElseThrow(
@@ -41,9 +45,14 @@ public class OrderServiceImp implements OrderService {
 
         var customer = user.getCustomer();
 
+        var price = customerService.getPriceForDelivery(user.getId(), orderDto.getLocation()).getDeliveryPrice();
+
+        if (price == null)
+            return new OrderDto();
+
         var order = new Order(
                orderDto.getPaymentType(),
-               orderDto.getCost(),
+               price,
                customer,
                orderDto.getLocation()
         );

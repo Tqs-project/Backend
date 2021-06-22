@@ -187,7 +187,61 @@ class CustomerController_RestTemplateIT {
     }
 
     @Test
+    void whenBadAddressIsGivenCreatingOrder_thenReturnEmptyOrderAndIgnoreIt() {
+        var user = new User(
+                customer.getUsername(),
+                customer.getEmail(),
+                "CUSTOMER",
+                customer.getPassword(),
+                customer.getPhoneNumber()
+        );
+        user.setAuthToken("token");
+
+        var customerDb = new Customer(
+                user,
+                customer.getAddress(),
+                customer.getDescription(),
+                customer.getTypeOfService(),
+                customer.getIban()
+        );
+        user.setCustomer(customerDb);
+
+        userRepository.saveAndFlush(user);
+        customerRepository.saveAndFlush(customerDb);
+
+        // create a order
+        var headers = new HttpHeaders();
+        headers.set("username", customer.getUsername());
+        headers.set("idToken", "token");
+
+        var createOrderResponse = restTemplate.postForEntity(
+                "/api/order",
+                new HttpEntity<>(
+                        new OrderCreateDto(
+                                user.getUsername(),
+                                "PAYPAL",
+                                2.0,
+                                "a bad address"
+                        ),
+                        headers
+                ),
+                OrderDto.class
+        );
+
+        // verify if returns a empty orderDto
+        assertThat(
+                createOrderResponse.getStatusCode()
+        ).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        assertThat(
+                createOrderResponse.getBody()
+        ).isEqualTo(new OrderDto());
+    }
+
+
+    @Test
     void getOrderTest() {
+        customer.setAddress("3810-190 Aveiro");
         ResponseEntity<CustomerDto> response = restTemplate.postForEntity(
                 "/api/customer", customer, CustomerDto.class
         );
@@ -216,7 +270,7 @@ class CustomerController_RestTemplateIT {
                             user.getUsername(),
                                 "PAYPAL",
                                 2.0,
-                                "Candy Land"
+                                "3810-100 Aveiro"
                         ),
                         headers
                 ),
@@ -226,6 +280,11 @@ class CustomerController_RestTemplateIT {
         assertThat(
                 createOrderResponse.getStatusCode()
         ).isEqualTo(HttpStatus.CREATED);
+
+        assertThat(
+                createOrderResponse.getBody()
+        ).extracting(OrderDto::getCost)
+            .isEqualTo(3.54);
 
         // return the order previously created
         var responseOrderDto = restTemplate.exchange(

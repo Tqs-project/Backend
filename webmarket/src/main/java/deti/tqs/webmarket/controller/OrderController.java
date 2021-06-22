@@ -38,7 +38,12 @@ public class OrderController {
         order.setPaymentType(orderDto.getPaymentType());
         order.setCost(orderDto.getCost());
         order.setLocation(orderDto.getLocation());
-        return new ResponseEntity<>(this.orderService.createOrder(order),
+
+        var response = this.orderService.createOrder(order);
+
+        if (response.getId() == null)
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response,
                 HttpStatus.CREATED);
     }
 }

@@ -1,5 +1,8 @@
 package deti.tqs.webmarket.service;
 
+import com.google.maps.model.DistanceMatrixElement;
+import com.google.maps.model.DistanceMatrixElementStatus;
+import com.google.maps.model.DistanceMatrixRow;
 import deti.tqs.webmarket.api.DistanceAPI;
 import deti.tqs.webmarket.dto.CustomerDto;
 import deti.tqs.webmarket.dto.OrderDto;
@@ -164,7 +167,7 @@ public class CustomerServiceImp implements CustomerService {
                 new String[] { destination }
         );
 
-        if (response == null)
+        if (response.rows[0].elements[0].status.equals(DistanceMatrixElementStatus.NOT_FOUND))
             return new PriceEstimationDto();
 
         var rideInfo = response.rows[0].elements[0];
