@@ -10,8 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: JMeter Test
-        uses: QAInsights/PerfAction@v2.0
+      - name: PerfAction for JMeter
+        uses: QAInsights/PerfAction@2.0
+
         with:
           test-plan-path: ./jmeterTests/Release_v1_0_0.jmx
           args: ""
