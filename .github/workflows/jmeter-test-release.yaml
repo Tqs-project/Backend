@@ -10,14 +10,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Run JMeter Action
-        uses: ./
+      - name: JMeter Test
+        uses: QAInsights/PerfAction@v2.0
         with:
-          testFilePath: jmeterTests/Release_v1_0_0.jmx
-          outputReportsFolder: reports/
-          args: "--loglevel INFO"
+          test-plan-path: ./jmeterTests/Release_v1_0_0.jmx
+          args: ""
+      - name: Upload Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: jmeter-results
+          path: result.jtl
 
-      - uses: actions/upload-artifact@v1
-        with:
-          name: jmeter-test-results
-          path: reports/
