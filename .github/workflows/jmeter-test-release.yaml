@@ -1,0 +1,23 @@
+name: Test deployment for release
+
+on:
+  push:
+    branches:
+      - release
+jobs:
+  action_build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run JMeter Action
+        uses: ./
+        with:
+          testFilePath: jmeterTests/Release_v1_0_0.jmx
+          outputReportsFolder: reports/
+          args: "--loglevel INFO"
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: jmeter-test-results
+          path: reports/
